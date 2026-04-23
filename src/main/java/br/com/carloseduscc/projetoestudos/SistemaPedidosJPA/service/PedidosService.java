@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ public class PedidosService {
 
     private static final Logger logger = LoggerFactory.getLogger("ACCESS_LOGGER");
 
+    @Transactional
     Pedido abrirPedido(UUID idUsuario) {
         Pedido pedido = new Pedido();
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NotFoundException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
