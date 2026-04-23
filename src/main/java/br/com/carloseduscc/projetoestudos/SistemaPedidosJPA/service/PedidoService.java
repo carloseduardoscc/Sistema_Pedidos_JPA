@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class PedidosService {
+public class PedidoService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
@@ -45,6 +45,13 @@ public class PedidosService {
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NotFoundException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
         List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
 
+        return pedidos;
+    }
+
+
+    @Transactional
+    List<Pedido> buscarPorStatus(StatusPedido statusPedido){
+        List<Pedido> pedidos = pedidoRepository.findByStatus(statusPedido);
         return pedidos;
     }
 

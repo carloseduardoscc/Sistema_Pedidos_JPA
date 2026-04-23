@@ -1,8 +1,7 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.service;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
-import org.junit.jupiter.api.BeforeEach;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +13,7 @@ import java.util.UUID;
 public class PedidoServiceTest {
 
     @Autowired
-    PedidosService service;
+    PedidoService service;
 
     @Test
     void abrirPedidoTest(){
@@ -24,6 +23,12 @@ public class PedidoServiceTest {
     @Test
     void buscarPedidosPorUsuarioTest(){
         List<Pedido> pedidos = service.buscarPorUsuarios(UUID.fromString("bf22929b-b7f5-474a-a991-60e553f1d17e"));
+        pedidos.forEach(System.out::println);
+    }
+
+    @Test
+    void buscarPedidosPorStatusTest(){
+        List<Pedido> pedidos = service.buscarPorStatus(StatusPedido.ENVIADO);
         pedidos.forEach(System.out::println);
     }
 
