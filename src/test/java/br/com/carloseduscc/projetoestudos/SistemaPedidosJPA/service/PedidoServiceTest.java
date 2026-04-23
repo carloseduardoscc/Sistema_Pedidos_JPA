@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,8 +28,14 @@ public class PedidoServiceTest {
     }
 
     @Test
-    void buscarPedidosPorStatusTest(){
+    void buscarPedidosPorStatusTest() {
         List<Pedido> pedidos = service.buscarPorStatus(StatusPedido.ENVIADO);
+        pedidos.forEach(System.out::println);
+    }
+
+    @Test
+    void buscarPedidosComTotalMaiorQue(){
+        List<Pedido> pedidos = service.buscarPedidosComTotalMaiorQue(new BigDecimal("74"));
         pedidos.forEach(System.out::println);
     }
 

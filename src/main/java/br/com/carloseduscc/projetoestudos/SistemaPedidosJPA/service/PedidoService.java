@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,6 +53,12 @@ public class PedidoService {
     @Transactional
     List<Pedido> buscarPorStatus(StatusPedido statusPedido){
         List<Pedido> pedidos = pedidoRepository.findByStatus(statusPedido);
+        return pedidos;
+    }
+
+    @Transactional
+    List<Pedido> buscarPedidosComTotalMaiorQue(BigDecimal valorMinimo){
+        List<Pedido> pedidos = pedidoRepository.buscarPedidoComTotalMaiorQue(valorMinimo);
         return pedidos;
     }
 
