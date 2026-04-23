@@ -14,6 +14,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Data
+@ToString(exclude = "itens")
 @Table(name = "pedido_tb", schema = "order_management")
 @Entity
 public class Pedido {

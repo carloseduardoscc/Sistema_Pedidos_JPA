@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,6 +38,14 @@ public class PedidosService {
         logger.atInfo().log("Adicionado pedido " + pedido.getId().toString() + " ao usuário " + idUsuario.toString() + " ");
 
         return pedido;
+    }
+
+    @Transactional
+    List<Pedido> buscarPorUsuarios(UUID idUsuario){
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NotFoundException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
+        List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
+
+        return pedidos;
     }
 
 }
