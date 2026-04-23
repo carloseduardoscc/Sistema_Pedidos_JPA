@@ -6,6 +6,7 @@ import org.hibernate.annotations.Check;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,11 @@ import java.util.UUID;
 @Table(name = "pedido_tb", schema = "order_management")
 @Entity
 public class Pedido {
+
+    {
+        this.dataPedido = LocalDate.now();
+        this.itens = new ArrayList<>();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

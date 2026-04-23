@@ -1,0 +1,40 @@
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.service;
+
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.PedidoRepository;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRepository;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.service.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+public class PedidosService {
+
+    @Autowired
+    UsuarioRepository usuarioRepository;
+
+    @Autowired
+    PedidoRepository pedidoRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger("ACCESS_LOGGER");
+
+    Pedido abrirPedido(UUID idUsuario) {
+        Pedido pedido = new Pedido();
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NotFoundException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
+        pedido.setUsuario(usuario);
+        pedido.setStatus(StatusPedido.PENDENTE);
+
+        pedidoRepository.save(pedido);
+
+        logger.atInfo().log("Adicionado pedido " + pedido.getId().toString() + " ao usuário " + idUsuario.toString() + " ");
+
+        return pedido;
+    }
+
+}
