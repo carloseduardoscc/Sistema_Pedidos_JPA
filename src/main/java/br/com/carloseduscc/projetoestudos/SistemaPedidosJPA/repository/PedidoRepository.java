@@ -4,11 +4,14 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
@@ -25,5 +28,13 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
         HAVING SUM(i.precoUnitario * i.quantidade) > ?1
 """)
     List<Pedido> buscarPedidoComTotalMaiorQue(BigDecimal valorMinimo);
+
+    @Query("""
+        SELECT p
+        FROM Pedido p
+        JOIN FETCH p.itens i
+        WHERE p.id = :id
+""")
+    Optional<Pedido> buscarPedidocomItensJoinFetch(@Param("id") UUID id);
 
 }

@@ -39,6 +39,14 @@ public class PedidoServiceTest {
         pedidos.forEach(System.out::println);
     }
 
+    @Test
+    void buscarPedidoComItens(){
+        Pedido pedido = service.buscarPedidosComItens(UUID.fromString("23f06425-8971-42ea-81ce-f88bc72ff1f6"));
+        System.out.println("PEDIDO: ");
+        System.out.println(pedido);
+        System.out.println("ITENS: ");
+        pedido.getItens().forEach(System.out::println);
+    }
 
 
 }

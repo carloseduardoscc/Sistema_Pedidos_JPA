@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -43,7 +44,9 @@ public class PedidoService {
 
     @Transactional
     List<Pedido> buscarPorUsuarios(UUID idUsuario){
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NotFoundException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
+        Optional<Usuario> optUsuario = usuarioRepository.findById(idUsuario);
+        Usuario usuario = optUsuario.orElseThrow(() -> new NotFoundException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
+
         List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
 
         return pedidos;
@@ -60,6 +63,13 @@ public class PedidoService {
     List<Pedido> buscarPedidosComTotalMaiorQue(BigDecimal valorMinimo){
         List<Pedido> pedidos = pedidoRepository.buscarPedidoComTotalMaiorQue(valorMinimo);
         return pedidos;
+    }
+
+    @Transactional
+    Pedido buscarPedidosComItens(UUID id){
+        Optional<Pedido> optPedido = pedidoRepository.buscarPedidocomItensJoinFetch(id);
+        Pedido pedido = optPedido.orElseThrow(() -> new NotFoundException("Usuário com Id: " + id.toString() + "não encontrado"));
+        return pedido;
     }
 
 }
