@@ -72,4 +72,8 @@ public class PedidoService {
         return pedido;
     }
 
+    @Transactional
+    void atualizarStatusPedido(UUID id, StatusPedido novoStatus){
+        pedidoRepository.atualizarStatus(id, novoStatus);
+    }
 }

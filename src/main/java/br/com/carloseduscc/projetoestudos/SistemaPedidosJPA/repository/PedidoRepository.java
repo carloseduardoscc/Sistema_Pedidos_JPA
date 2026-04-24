@@ -37,4 +37,11 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
 """)
     Optional<Pedido> buscarPedidocomItensJoinFetch(@Param("id") UUID id);
 
+    @Modifying
+    @Query("""
+        UPDATE Pedido p
+        SET p.status = :status
+        WHERE p.id = :id
+""")
+    void atualizarStatus(@Param("id") UUID id, @Param("status") StatusPedido status);
 }

@@ -48,5 +48,8 @@ public class PedidoServiceTest {
         pedido.getItens().forEach(System.out::println);
     }
 
-
+    @Test
+    void atualizarStatusPedido(){
+        service.atualizarStatusPedido(UUID.fromString("90987654-83e5-4c47-b94b-0cbc14a6418b"), StatusPedido.PAGO);
+    }
 }
