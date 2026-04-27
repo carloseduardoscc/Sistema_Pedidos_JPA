@@ -52,4 +52,11 @@ public class PedidoServiceTest {
     void atualizarStatusPedido(){
         service.atualizarStatusPedido(UUID.fromString("90987654-83e5-4c47-b94b-0cbc14a6418b"), StatusPedido.PAGO);
     }
+
+    @Test
+    void calcularTotalPedido(){
+//        BigDecimal valorTotal = service.obterTotalPedido(UUID.fromString("33f06425-8971-42ea-81ce-f88bc72ff1f6"));
+        BigDecimal valorTotal = service.obterTotalPedido(UUID.fromString("23f06425-8971-42ea-81ce-f88bc72ff1f6"));
+        System.out.println("Total pedido: "+valorTotal);
+    }
 }

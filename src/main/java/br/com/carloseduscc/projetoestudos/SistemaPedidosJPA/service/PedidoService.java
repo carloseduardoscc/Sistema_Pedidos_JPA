@@ -67,7 +67,7 @@ public class PedidoService {
 
     @Transactional
     Pedido buscarPedidosComItens(UUID id){
-        Optional<Pedido> optPedido = pedidoRepository.buscarPedidocomItensJoinFetch(id);
+        Optional<Pedido> optPedido = pedidoRepository.buscarPedidoComItensJoinFetch(id);
         Pedido pedido = optPedido.orElseThrow(() -> new NotFoundException("Usuário com Id: " + id.toString() + "não encontrado"));
         return pedido;
     }
@@ -75,5 +75,10 @@ public class PedidoService {
     @Transactional
     void atualizarStatusPedido(UUID id, StatusPedido novoStatus){
         pedidoRepository.atualizarStatus(id, novoStatus);
+    }
+
+    BigDecimal obterTotalPedido(UUID id){
+        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(id).orElseThrow(() -> new NotFoundException("Pedido com Id: " + id.toString() + "não encontrado"));
+        return pedido.getTotal();
     }
 }

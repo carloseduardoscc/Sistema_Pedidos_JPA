@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +34,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
         JOIN FETCH p.itens i
         WHERE p.id = :id
 """)
-    Optional<Pedido> buscarPedidocomItensJoinFetch(@Param("id") UUID id);
+    Optional<Pedido> buscarPedidoComItensJoinFetch(@Param("id") UUID id);
 
     @Modifying
     @Query("""
