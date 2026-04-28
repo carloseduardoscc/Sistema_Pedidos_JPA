@@ -84,4 +84,13 @@ public class PedidoServiceTest {
         service.atualizarStatusPedidoDirtyChecking(UUID.fromString("23f06425-8971-42ea-81ce-f88bc72ff1f6"), StatusPedido.PENDENTE);
     }
 
+    /**
+     * Utiliza método abre uma transação, salva entidade e lança exceção, é suposto a realizar o rollback e não persistir a entidade salva
+     */
+    @Test
+    void testarRollbackEmExcecao(){
+        Pedido pedido = new Pedido();
+        service.cadastrarPedidoComItem(pedido, "Item teste", 0, new BigDecimal("-1"));
+    }
+
 }

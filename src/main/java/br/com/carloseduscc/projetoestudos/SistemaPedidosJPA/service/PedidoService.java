@@ -99,4 +99,19 @@ public class PedidoService {
         pedido.adicionarItem(itemPedido);
     }
 
+    @Transactional
+    void cadastrarPedidoComItem(Pedido pedido, String nomeItem, Integer quantidadeItem, BigDecimal precounitarioItem){
+        pedidoRepository.save(pedido);
+        logger.atInfo().log("Pedido salvo!");
+
+        ItemPedido item = new ItemPedido();
+        item.setNomeProduto(nomeItem);
+        item.setQuantidade(quantidadeItem);
+        item.setPrecoUnitario(precounitarioItem);
+
+        pedido.adicionarItem(item);
+
+        itemPedidoRepository.save(item);
+        logger.atInfo().log("Item do pedido salvo!");
+    }
 }
