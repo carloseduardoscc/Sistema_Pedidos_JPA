@@ -79,4 +79,9 @@ public class PedidoServiceTest {
         service.adicionarItem(UUID.fromString("33f06425-8971-42ea-81ce-f88bc72ff1f6"), novoItem);
     }
 
+    @Test
+    void atualizarStatusPedidoDirtyChecking(){
+        service.atualizarStatusPedidoDirtyChecking(UUID.fromString("23f06425-8971-42ea-81ce-f88bc72ff1f6"), StatusPedido.PENDENTE);
+    }
+
 }

@@ -82,6 +82,12 @@ public class PedidoService {
         pedidoRepository.atualizarStatus(id, novoStatus);
     }
 
+    @Transactional
+    void atualizarStatusPedidoDirtyChecking(UUID id, StatusPedido novoStatus){
+        Pedido pedido = pedidoRepository.findById(id).orElseThrow(() -> new NotFoundException("Usuário com Id: " + id.toString() + " não encontrado"));
+        pedido.setStatus(novoStatus);
+    }
+
     BigDecimal obterTotalPedido(UUID id){
         Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(id).orElseThrow(() -> new NotFoundException("Pedido com Id: " + id.toString() + "não encontrado"));
         return pedido.getTotal();
