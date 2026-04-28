@@ -1,8 +1,10 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.service;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.service.exception.NotFoundException;
@@ -25,6 +27,9 @@ public class PedidoService {
 
     @Autowired
     PedidoRepository pedidoRepository;
+
+    @Autowired
+    ItemPedidoRepository itemPedidoRepository;
 
     private static final Logger logger = LoggerFactory.getLogger("ACCESS_LOGGER");
 
@@ -81,4 +86,11 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(id).orElseThrow(() -> new NotFoundException("Pedido com Id: " + id.toString() + "não encontrado"));
         return pedido.getTotal();
     }
+
+    @Transactional
+    void adicionarItem(UUID idPedido, ItemPedido itemPedido){
+        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(() -> new NotFoundException("Pedido com Id: " + idPedido.toString() + "não encontrado"));
+        pedido.adicionarItem(itemPedido);
+    }
+
 }

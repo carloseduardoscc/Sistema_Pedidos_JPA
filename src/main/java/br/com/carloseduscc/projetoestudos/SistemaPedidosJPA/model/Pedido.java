@@ -22,6 +22,7 @@ public class Pedido {
     {
         this.dataPedido = LocalDate.now();
         this.itens = new ArrayList<>();
+        this.status = StatusPedido.PENDENTE;
     }
 
     @Id
@@ -36,7 +37,7 @@ public class Pedido {
     private StatusPedido status;
 
     // Relação
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.PERSIST)
     private List<ItemPedido> itens;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,5 +47,10 @@ public class Pedido {
         return itens.stream()
                 .map(i -> i.getPrecoUnitario().multiply(BigDecimal.valueOf(i.getQuantidade())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void adicionarItem(ItemPedido item){
+        itens.add(item);
+        item.setPedido(this);
     }
 }
