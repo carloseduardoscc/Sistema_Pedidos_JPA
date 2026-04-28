@@ -93,4 +93,14 @@ public class PedidoServiceTest {
         service.cadastrarPedidoComItem(pedido, "Item teste", 0, new BigDecimal("-1"));
     }
 
+    @Test
+    @Transactional
+    void buscarEntitdadeForaDaTransação(){
+        Pedido pedido = pedidoRepository.findById(UUID.fromString("23f06425-8971-42ea-81ce-f88bc72ff1f6")).get();
+
+        entityManager.detach(pedido);
+
+        pedido.setStatus(StatusPedido.ENVIADO);
+        entityManager.flush();
+    }
 }
