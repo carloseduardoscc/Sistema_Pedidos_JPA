@@ -1,6 +1,6 @@
 spring:
   application:
-    name: SistemaPedidosJPA
+    name: SistemaPedidos
   datasource:
     url: jdbc:postgresql://localhost:5432/sistema_pedidos_jpa
     username: postgres
