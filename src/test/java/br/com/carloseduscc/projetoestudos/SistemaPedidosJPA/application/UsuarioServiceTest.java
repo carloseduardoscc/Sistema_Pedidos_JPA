@@ -1,4 +1,4 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.service;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ public class UsuarioServiceTest {
 
     @Test
     void cadastrarUsuarioTeste(){
-        service.registrarUsuario("João Almeida", "joao.almeida@email.com");
+        service.cadastrarUsuario("João Almeida", "joao.almeida@email.com");
     }
 
 }

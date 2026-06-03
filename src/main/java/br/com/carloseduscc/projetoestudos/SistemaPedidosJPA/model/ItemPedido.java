@@ -1,6 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model;
 
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.BussinesViolationException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.ViolacaoRegraDeNegocio;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
@@ -44,14 +44,14 @@ public class ItemPedido {
 
     public void setQuantidade(Integer quantidade) {
         if(quantidade <= 0){
-            throw new BussinesViolationException("Não são permitidas quantidades de itens de pedido menores ou iguais que zero!");
+            throw new ViolacaoRegraDeNegocio("Não são permitidas quantidades de itens de pedido menores ou iguais que zero!");
         }
         this.quantidade = quantidade;
     }
 
     public void setPrecoUnitario(BigDecimal precoUnitario) {
         if (precoUnitario.compareTo(BigDecimal.ZERO) < 0){
-            throw new BussinesViolationException("Não são permitidos preços unitários de itens de pedido menores que zero!");
+            throw new ViolacaoRegraDeNegocio("Não são permitidos preços unitários de itens de pedido menores que zero!");
         }
         this.precoUnitario = precoUnitario;
     }
