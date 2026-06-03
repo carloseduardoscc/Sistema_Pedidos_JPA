@@ -2,8 +2,12 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,11 +18,11 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "usuario_tb", schema = "order_management")
 public class Usuario {
 
     {
-        this.dataCadastro = LocalDate.now();
         this.pedidos = new ArrayList<>();
     }
 
@@ -31,10 +35,22 @@ public class Usuario {
 
     @Column(name = "email", length = 254, unique = true)
     private String email;
-    private LocalDate dataCadastro;
 
     // Relação
     @OneToMany(mappedBy = "usuario")
     List<Pedido> pedidos;
+
+    // Auditoria
+    @CreatedDate
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @LastModifiedDate
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+
+    // Controle de concorrência otimista
+    @Version
+    private Long version;
 
 }

@@ -1,0 +1,16 @@
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record CadastrarUsuarioCommand
+        (
+                @NotBlank(message = "campo obrigatório")
+                @Size(max = 100, message = "campo precisa ter menos que 100 caracteres")
+                @Size(min = 2, message = "campo precisa ter mais que 2 caracteres")
+                String nome,
+                @Email(message = "E-mail inválido")
+                String email
+        ) {
+}

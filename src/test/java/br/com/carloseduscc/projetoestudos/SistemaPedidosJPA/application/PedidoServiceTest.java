@@ -1,4 +1,4 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.service;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;

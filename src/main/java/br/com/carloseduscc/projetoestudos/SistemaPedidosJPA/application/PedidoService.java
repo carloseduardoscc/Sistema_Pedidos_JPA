@@ -1,5 +1,6 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.service;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
@@ -7,7 +8,6 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRepository;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class PedidoService {
     @Transactional
     Pedido abrirPedido(UUID idUsuario) {
         Pedido pedido = new Pedido();
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NotFoundException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
         pedido.setUsuario(usuario);
         pedido.setStatus(StatusPedido.PENDENTE);
 
@@ -50,7 +50,7 @@ public class PedidoService {
     @Transactional
     List<Pedido> buscarPorUsuarios(UUID idUsuario){
         Optional<Usuario> optUsuario = usuarioRepository.findById(idUsuario);
-        Usuario usuario = optUsuario.orElseThrow(() -> new NotFoundException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
+        Usuario usuario = optUsuario.orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
 
         List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
 
@@ -73,7 +73,7 @@ public class PedidoService {
     @Transactional
     Pedido buscarPedidosComItens(UUID id){
         Optional<Pedido> optPedido = pedidoRepository.buscarPedidoComItensJoinFetch(id);
-        Pedido pedido = optPedido.orElseThrow(() -> new NotFoundException("Usuário com Id: " + id.toString() + "não encontrado"));
+        Pedido pedido = optPedido.orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + id.toString() + "não encontrado"));
         return pedido;
     }
 
@@ -84,18 +84,18 @@ public class PedidoService {
 
     @Transactional
     void atualizarStatusPedidoDirtyChecking(UUID id, StatusPedido novoStatus){
-        Pedido pedido = pedidoRepository.findById(id).orElseThrow(() -> new NotFoundException("Usuário com Id: " + id.toString() + " não encontrado"));
+        Pedido pedido = pedidoRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + id.toString() + " não encontrado"));
         pedido.setStatus(novoStatus);
     }
 
     BigDecimal obterTotalPedido(UUID id){
-        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(id).orElseThrow(() -> new NotFoundException("Pedido com Id: " + id.toString() + "não encontrado"));
+        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + "não encontrado"));
         return pedido.getTotal();
     }
 
     @Transactional
     void adicionarItem(UUID idPedido, ItemPedido itemPedido){
-        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(() -> new NotFoundException("Pedido com Id: " + idPedido.toString() + "não encontrado"));
+        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + "não encontrado"));
         pedido.adicionarItem(itemPedido);
     }
 

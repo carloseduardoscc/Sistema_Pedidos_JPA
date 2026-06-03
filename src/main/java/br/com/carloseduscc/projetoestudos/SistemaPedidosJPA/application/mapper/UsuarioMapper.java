@@ -1,0 +1,12 @@
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper;
+
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.CadastrarUsuarioCommand;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.UsuarioDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface UsuarioMapper {
+    UsuarioDTO toDTO(Usuario usuario);
+    Usuario fromCommand(CadastrarUsuarioCommand usuario);
+}
