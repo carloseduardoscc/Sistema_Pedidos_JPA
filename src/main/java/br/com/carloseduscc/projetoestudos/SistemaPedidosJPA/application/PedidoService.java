@@ -1,5 +1,9 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.PedidoAdicionadoResponseDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.ItemPedidoMapper;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.validator.PedidoValidator;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
@@ -8,9 +12,9 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,21 +24,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class PedidoService {
 
-    @Autowired
-    UsuarioRepository usuarioRepository;
-
-    @Autowired
-    PedidoRepository pedidoRepository;
-
-    @Autowired
-    ItemPedidoRepository itemPedidoRepository;
-
+    private final UsuarioRepository usuarioRepository;
+    private final PedidoRepository pedidoRepository;
+    private final ItemPedidoRepository itemPedidoRepository;
+    private final ItemPedidoMapper mapper;
     private static final Logger logger = LoggerFactory.getLogger("ACCESS_LOGGER");
 
     @Transactional
-    Pedido abrirPedido(UUID idUsuario) {
+    public Pedido abrirPedido(UUID idUsuario) {
         Pedido pedido = new Pedido();
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
         pedido.setUsuario(usuario);
@@ -94,9 +94,13 @@ public class PedidoService {
     }
 
     @Transactional
-    void adicionarItem(UUID idPedido, ItemPedido itemPedido){
-        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + "não encontrado"));
+    public PedidoAdicionadoResponseDTO adicionarItem(UUID idPedido, AdicionarItemPedidoCommand itemCmd){
+        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + "não encontrado"));
+        ItemPedido itemPedido = mapper.fromCommand(itemCmd);
         pedido.adicionarItem(itemPedido);
+        ItemPedido itemSalvo = itemPedidoRepository.save(itemPedido);
+        PedidoAdicionadoResponseDTO respostaDTO = mapper.toPedidoAdicionadoResponseDTO(itemSalvo);
+        return respostaDTO;
     }
 
     @Transactional

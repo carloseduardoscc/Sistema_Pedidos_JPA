@@ -4,6 +4,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.Camp
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.ErroResposta;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.OperacaoNaoPermitidaException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegistroDuplicadoException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegraDeNegocioException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,7 +20,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    ErroResposta handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    ErroResposta handleCamposInvalidos(MethodArgumentNotValidException e){
         ArrayList<CampoErro> errosDeValidacao = e.getFieldErrors().stream()
                 .map(fe -> new CampoErro(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -28,6 +29,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
                 "Erro de validação",
                 errosDeValidacao
+        );
+    }
+
+    @ExceptionHandler(RegraDeNegocioException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    ErroResposta handleRegraDeNegocioViolada(MethodArgumentNotValidException e){
+        return new ErroResposta(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                e.getMessage(),
+                List.of()
         );
     }
 
