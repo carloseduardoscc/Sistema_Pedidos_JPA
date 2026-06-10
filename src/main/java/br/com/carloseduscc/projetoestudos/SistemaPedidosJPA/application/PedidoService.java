@@ -3,7 +3,6 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.PedidoAdicionadoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.ItemPedidoMapper;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.validator.PedidoValidator;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
@@ -95,7 +94,7 @@ public class PedidoService {
 
     @Transactional
     public PedidoAdicionadoResponseDTO adicionarItem(UUID idPedido, AdicionarItemPedidoCommand itemCmd){
-        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + "não encontrado"));
+        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + " não encontrado"));
         ItemPedido itemPedido = mapper.fromCommand(itemCmd);
         pedido.adicionarItem(itemPedido);
         ItemPedido itemSalvo = itemPedidoRepository.save(itemPedido);

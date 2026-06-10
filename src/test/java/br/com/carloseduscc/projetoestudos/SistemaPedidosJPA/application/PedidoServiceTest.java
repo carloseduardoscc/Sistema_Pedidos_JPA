@@ -1,5 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
@@ -28,14 +29,15 @@ public class PedidoServiceTest {
 
     @Test
     void abrirPedidoTest(){
-        service.abrirPedido(UUID.fromString("23f06425-8971-42ea-81ce-f88bc72ff1f6"));
+        service.abrirPedido(UUID.fromString("8d3623d9-1284-4b0e-ae82-ad9297af9a87"));
     }
 
     @Test
     void buscarPedidosPorUsuarioTest(){
-        List<Pedido> pedidos = service.buscarPorUsuarios(UUID.fromString("bf22929b-b7f5-474a-a991-60e553f1d17e"));
+        List<Pedido> pedidos = service.buscarPorUsuarios(UUID.fromString("8d3623d9-1284-4b0e-ae82-ad9297af9a87"));
         pedidos.forEach(System.out::println);
     }
+
 
     @Test
     void buscarPedidosPorStatusTest() {
@@ -71,12 +73,9 @@ public class PedidoServiceTest {
     }
     @Test
     void adicionarItemTest(){
-        ItemPedido novoItem = new ItemPedido();
-        novoItem.setNomeProduto("Toner Kyocera Ecosys M3655");
-        novoItem.setQuantidade(1);
-        novoItem.setPrecoUnitario(new BigDecimal("77.81"));
+        AdicionarItemPedidoCommand cmd = new AdicionarItemPedidoCommand("Toner Kyocera Ecosys M3655", 1, new BigDecimal("77.81"));
 
-        service.adicionarItem(UUID.fromString("33f06425-8971-42ea-81ce-f88bc72ff1f6"), novoItem);
+        service.adicionarItem(UUID.fromString("33f06425-8971-42ea-81ce-f88bc72ff1f6"),cmd );
     }
 
     @Test
