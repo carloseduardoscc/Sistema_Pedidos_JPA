@@ -1,15 +1,7 @@
 spring:
   application:
     name: SistemaPedidos
-  datasource:
-    url: jdbc:postgresql://localhost:5432/sistema_pedidos_jpa
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+  profiles:
+    active: ${APP_PROFILE:test}
   jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
+    open-in-view: false
