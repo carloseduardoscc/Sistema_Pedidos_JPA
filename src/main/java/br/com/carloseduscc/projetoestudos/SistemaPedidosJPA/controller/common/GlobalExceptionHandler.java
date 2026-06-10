@@ -2,6 +2,7 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.CampoErro;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.ErroResposta;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.OperacaoNaoPermitidaException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegistroDuplicadoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegraDeNegocioException;
@@ -20,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    ErroResposta handleCamposInvalidos(MethodArgumentNotValidException e){
+    ErroResposta handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
         ArrayList<CampoErro> errosDeValidacao = e.getFieldErrors().stream()
                 .map(fe -> new CampoErro(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -34,7 +35,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RegraDeNegocioException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    ErroResposta handleRegraDeNegocioViolada(MethodArgumentNotValidException e){
+    ErroResposta handleRegraDeNegocioException(RegraDeNegocioException e){
         return new ErroResposta(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
                 e.getMessage(),
@@ -62,6 +63,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(NaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    ErroResposta handleNaoEncontradoException(NaoEncontradoException e){
+        return new ErroResposta(
+                HttpStatus.NOT_FOUND.value(),
+                e.getMessage(),
+                List.of()
+        );
+    }
+
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -69,7 +80,7 @@ public class GlobalExceptionHandler {
         return new ErroResposta(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Ocorreu um erro inesperado. Entre em contato com a administração.",
-                List.of()
+                List.of(new CampoErro("Mensagem", e.getMessage()))
         );
     }
 }
