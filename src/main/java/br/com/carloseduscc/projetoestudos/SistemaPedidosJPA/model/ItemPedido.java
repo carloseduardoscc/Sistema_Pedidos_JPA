@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @ToString(exclude = "pedido")
-@Table(name = "itemPedido_tb", schema = "order_management")
+@Table(name = "item_pedido_tb", schema = "order_management")
 @Check(constraints = "quantidade > 0 AND preco_unitario >= 0")
 @Entity
 public class ItemPedido {
