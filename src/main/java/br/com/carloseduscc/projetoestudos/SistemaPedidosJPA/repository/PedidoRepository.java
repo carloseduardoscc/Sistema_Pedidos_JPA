@@ -29,10 +29,10 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
     List<Pedido> buscarPedidoComTotalMaiorQue(BigDecimal valorMinimo);
 
     @Query("""
-        SELECT p
-        FROM Pedido p
-        JOIN FETCH p.itens i
-        WHERE p.id = :id
+    SELECT DISTINCT p
+    FROM Pedido p
+    LEFT JOIN FETCH p.itens
+    WHERE p.id = :id
 """)
     Optional<Pedido> buscarPedidoComItensJoinFetch(@Param("id") UUID id);
 
