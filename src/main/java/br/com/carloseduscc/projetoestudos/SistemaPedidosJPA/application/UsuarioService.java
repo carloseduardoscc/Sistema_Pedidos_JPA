@@ -4,6 +4,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.C
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.UsuarioDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.UsuarioMapper;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.validator.UsuarioValidator;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +28,7 @@ public class UsuarioService {
     final private UsuarioValidator validator;
 
     @Transactional
-    public UsuarioDTO cadastrarUsuario(CadastrarUsuarioCommand usuarioCmd){
+    public UsuarioDTO cadastrarUsuario(CadastrarUsuarioCommand usuarioCmd) {
 
         Usuario usuario = mapper.fromCommand(usuarioCmd);
 
@@ -32,8 +36,14 @@ public class UsuarioService {
 
         Usuario usuarioSalvo = repository.save(usuario);
 
-        logger.atInfo().log("Usuário "+usuario.getId().toString()+" cadastrado");
+        logger.atInfo().log("Usuário " + usuario.getId().toString() + " cadastrado");
 
         return mapper.toDTO(usuarioSalvo);
+    }
+
+    public UsuarioDTO buscarDetalhes(UUID id) {
+        Optional<Usuario> usuarioOpt = repository.findById(id);
+        Usuario usuario = usuarioOpt.orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
+        return mapper.toDTO(usuario);
     }
 }

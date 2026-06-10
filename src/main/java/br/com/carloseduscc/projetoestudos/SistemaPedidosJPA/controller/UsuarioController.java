@@ -9,19 +9,16 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioS
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("usuarios")
 @RequiredArgsConstructor
 public class UsuarioController implements GenericController {
 
-    private final UsuarioMapper mapper;
     private final UsuarioService service;
 
     @PostMapping
@@ -29,5 +26,11 @@ public class UsuarioController implements GenericController {
         UsuarioDTO usuarioSalvo = service.cadastrarUsuario(usuarioCmd);
         URI uri = gerarHeaderLocation(usuarioSalvo.id());
         return ResponseEntity.created(uri).body(usuarioSalvo);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<Object> buscarDetalhes(@PathVariable UUID id){
+        UsuarioDTO usuarioDTO = service.buscarDetalhes(id);
+        return ResponseEntity.ok(usuarioDTO);
     }
 }
