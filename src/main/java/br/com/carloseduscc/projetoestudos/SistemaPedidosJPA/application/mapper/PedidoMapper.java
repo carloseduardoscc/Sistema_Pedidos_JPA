@@ -1,0 +1,14 @@
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper;
+
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDetalhadoDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper(componentModel = "spring", uses = ItemPedidoMapper.class)
+public interface PedidoMapper {
+
+    @Mapping(target = "totalItens", expression = "java( pedido.getItens().size() )")
+    @Mapping(target = "valorTotal", expression = "java( pedido.getTotal() )")
+    PedidoDetalhadoDTO toDTO(Pedido pedido);
+}

@@ -2,7 +2,7 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.PedidoService;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.PedidoAdicionadoResponseDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDetalhadoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common.GenericController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +24,11 @@ public class PedidoController implements GenericController {
         var dtoResponse = service.adicionarItem(idPedido, itemCmd);
         URI uri = gerarHeaderLocation(dtoResponse.idItem().toString());
         return ResponseEntity.created(uri).body(dtoResponse);
+    }
+
+    @GetMapping()
+    public ResponseEntity<Object> buscarDetalhes(@PathVariable UUID idPedido){
+        var responseDTO = service.obterDetalhes(idPedido);
+        return ResponseEntity.ok(responseDTO);
     }
 }

@@ -1,6 +1,5 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.validator;
 
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.CampoErro;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegistroDuplicadoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRepository;
