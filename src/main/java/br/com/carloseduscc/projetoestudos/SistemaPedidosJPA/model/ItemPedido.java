@@ -4,8 +4,11 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegraDeNeg
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Check;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -32,6 +35,20 @@ public class ItemPedido {
     // Relação
     @ManyToOne
     private Pedido pedido;
+
+    // Auditoria
+    @CreatedDate
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
+    @LastModifiedDate
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+    @Column(name = "id_usuario")
+    private UUID idUsuario;
+
+    // Controle de concorrência otimista
+    @Version
+    private Long version;
 
     // Setters
     public void setId(UUID id) {
