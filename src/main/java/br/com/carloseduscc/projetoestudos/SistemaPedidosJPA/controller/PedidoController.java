@@ -41,4 +41,5 @@ public class PedidoController implements GenericController {
         Page<PedidoDTO> page = service.pesquisarListagem(parametros);
         return ResponseEntity.ok(page);
     }
+
 }
