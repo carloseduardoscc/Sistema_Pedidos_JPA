@@ -2,9 +2,7 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.CadastrarUsuarioCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common.GenericController;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.UsuarioDTO;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.UsuarioMapper;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usuario.UsuarioDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +37,8 @@ public class UsuarioController implements GenericController {
     public ResponseEntity<Object> pesquisarListagem(
         @RequestParam(value = "nome", required = false) String nome,
         @RequestParam(value = "email", required = false) String email,
-        @RequestParam(value = "pagina", defaultValue = "0") Integer numeroPagina,
-        @RequestParam(value = "tamanho-pagina", defaultValue = "10") Integer tamanhoPagina
+        @RequestParam(value = "page", defaultValue = "0") Integer numeroPagina,
+        @RequestParam(value = "size", defaultValue = "10") Integer tamanhoPagina
     ){
         Page<UsuarioDTO> pagina = service.pesquisarListagem(nome, email, numeroPagina, tamanhoPagina);
         return ResponseEntity.ok(pagina);

@@ -59,6 +59,31 @@ public class ItemPedido {
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
     }
+
+    // Getters
+    public UUID getId() {
+        return id;
+    }
+
+    public String getNomeProduto() {
+        return nomeProduto;
+    }
+
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
+    public BigDecimal getPrecoUnitario() {
+        return precoUnitario;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public BigDecimal getValorTotal(){
+        return precoUnitario.multiply(BigDecimal.valueOf(quantidade));
+    }
 }
 
 

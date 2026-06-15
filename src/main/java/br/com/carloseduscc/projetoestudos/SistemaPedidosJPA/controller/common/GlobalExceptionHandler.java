@@ -1,7 +1,7 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common;
 
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.CampoErro;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.ErroResposta;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.erro.CampoErro;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.erro.ErroResposta;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.OperacaoNaoPermitidaException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegistroDuplicadoException;

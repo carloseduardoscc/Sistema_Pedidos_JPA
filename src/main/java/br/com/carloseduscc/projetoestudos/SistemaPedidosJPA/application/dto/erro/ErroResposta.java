@@ -1,4 +1,4 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.erro;
 
 import org.springframework.http.HttpStatus;
 

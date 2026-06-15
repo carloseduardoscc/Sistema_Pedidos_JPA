@@ -1,8 +1,12 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.PedidoAdicionadoResponseDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.ItemAdicionadoResponseDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDetalhadoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.ItemPedidoMapper;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.PedidoMapper;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_filters.RequisicaoFiltroPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
@@ -14,6 +18,9 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRe
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +36,8 @@ public class PedidoService {
     private final UsuarioRepository usuarioRepository;
     private final PedidoRepository pedidoRepository;
     private final ItemPedidoRepository itemPedidoRepository;
-    private final ItemPedidoMapper mapper;
+    private final ItemPedidoMapper itemPedidoMapper;
+    private final PedidoMapper mapper;
     private static final Logger logger = LoggerFactory.getLogger("ACCESS_LOGGER");
 
     @Transactional
@@ -93,12 +101,12 @@ public class PedidoService {
     }
 
     @Transactional
-    public PedidoAdicionadoResponseDTO adicionarItem(UUID idPedido, AdicionarItemPedidoCommand itemCmd){
+    public ItemAdicionadoResponseDTO adicionarItem(UUID idPedido, AdicionarItemPedidoCommand itemCmd){
         Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + " não encontrado"));
-        ItemPedido itemPedido = mapper.fromCommand(itemCmd);
+        ItemPedido itemPedido = itemPedidoMapper.fromCommand(itemCmd);
         pedido.adicionarItem(itemPedido);
         ItemPedido itemSalvo = itemPedidoRepository.save(itemPedido);
-        PedidoAdicionadoResponseDTO respostaDTO = mapper.toPedidoAdicionadoResponseDTO(itemSalvo);
+        ItemAdicionadoResponseDTO respostaDTO = itemPedidoMapper.toPedidoAdicionadoResponseDTO(itemSalvo);
         return respostaDTO;
     }
 
@@ -116,5 +124,16 @@ public class PedidoService {
 
         itemPedidoRepository.save(item);
         logger.atInfo().log("Item do pedido salvo!");
+    }
+
+    public PedidoDetalhadoDTO obterDetalhes(UUID idPedido) {
+        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + " não encontrado"));
+        return mapper.toDTODetalhado(pedido);
+    }
+
+    public Page<PedidoDTO> pesquisarListagem(RequisicaoFiltroPedido parametros) {
+        Pageable pageable = PageRequest.of(parametros.getPage(), parametros.getSize());
+        Page<Pedido> page = pedidoRepository.findAll(parametros.toSpecification(), pageable);
+        return page.map(mapper::toDTO);
     }
 }

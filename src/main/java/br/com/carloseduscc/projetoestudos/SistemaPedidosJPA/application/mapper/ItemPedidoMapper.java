@@ -1,8 +1,10 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.PedidoAdicionadoResponseDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.item.ItemResumoDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.ItemAdicionadoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -12,5 +14,8 @@ public interface ItemPedidoMapper {
 
     @Mapping(source="id", target = "idItem")
     @Mapping(source = "pedido.id", target = "idPedido")
-    PedidoAdicionadoResponseDTO toPedidoAdicionadoResponseDTO(ItemPedido itemPedido);
+    ItemAdicionadoResponseDTO toPedidoAdicionadoResponseDTO(ItemPedido itemPedido);
+
+    @Mapping(target = "valor", expression = "java( itemPedido.getValorTotal() )")
+    ItemResumoDTO toResumoDTO(ItemPedido itemPedido);
 }
