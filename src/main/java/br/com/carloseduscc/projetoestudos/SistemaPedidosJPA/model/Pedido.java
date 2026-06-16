@@ -33,6 +33,10 @@ public class Pedido {
         this.status = StatusPedido.PENDENTE;
     }
 
+    public Pedido(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

@@ -1,5 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.AbrirPedidoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDetalhadoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
@@ -14,4 +15,8 @@ public interface PedidoMapper {
     PedidoDetalhadoDTO toDTODetalhado(Pedido pedido);
 
     PedidoDTO toDTO(Pedido pedido);
+
+    // TO RESPONSES
+    @Mapping(target = "dataPedido", source = "dataHoraPedido")
+    AbrirPedidoResponseDTO toAbrirPedidoResponseDto(Pedido pedido);
 }

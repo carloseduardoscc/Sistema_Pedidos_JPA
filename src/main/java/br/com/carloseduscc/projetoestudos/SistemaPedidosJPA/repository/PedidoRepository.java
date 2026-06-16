@@ -44,4 +44,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecif
         WHERE p.id = :id
 """)
     void atualizarStatus(@Param("id") UUID id, @Param("status") StatusPedido status);
+
+    boolean existsByUsuarioAndStatus(Usuario usuario, StatusPedido status);
 }
