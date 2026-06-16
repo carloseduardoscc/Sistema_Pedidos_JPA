@@ -1,5 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AtualizarDadosUsuarioCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.CadastrarUsuarioCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.AbrirPedidoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usuario.UsuarioDTO;
@@ -14,6 +15,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.specs.UsuarioSpecs;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +65,18 @@ public class UsuarioService {
 
         return repository.findAll(usuarioSpecs, pageable).map(mapper::toDTO);
 
+    }
+
+    @Transactional
+    public void atualizarDados(@Valid AtualizarDadosUsuarioCommand dados, UUID id) {
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
+        if (dados.nome() != null && !usuario.getNome().equals(dados.nome())){
+            usuario.setNome(dados.nome());
+        }
+        if (dados.email() != null && !usuario.getEmail().equals(dados.email())) {
+            validator.validarEmailJaExiste(dados.email());
+            usuario.setEmail(dados.email());
+        }
     }
 
     public AbrirPedidoResponseDTO abrirNovoPedido(UUID id) {

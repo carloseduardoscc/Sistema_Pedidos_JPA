@@ -1,5 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AtualizarDadosUsuarioCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.CadastrarUsuarioCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.AbrirPedidoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common.GenericController;
@@ -43,6 +44,12 @@ public class UsuarioController implements GenericController {
     ){
         Page<UsuarioDTO> pagina = service.pesquisarListagem(nome, email, numeroPagina, tamanhoPagina);
         return ResponseEntity.ok(pagina);
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<Object> atualizarDados(@RequestBody @Valid AtualizarDadosUsuarioCommand cmd, @PathVariable UUID id){
+        service.atualizarDados(cmd, id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("{id}/pedidos")
