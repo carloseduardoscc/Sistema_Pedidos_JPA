@@ -1,11 +1,17 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.CadastrarUsuarioCommand;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.AbrirPedidoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usuario.UsuarioDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.PedidoMapper;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.UsuarioMapper;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.validator.UsuarioValidator;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegraDeNegocioException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.specs.UsuarioSpecs;
 import lombok.RequiredArgsConstructor;
@@ -27,20 +33,17 @@ public class UsuarioService {
     private static final Logger logger = LoggerFactory.getLogger("ACCESS_LOGGER");
 
     final private UsuarioRepository repository;
+    final private PedidoRepository pedidoRepository;
     final private UsuarioMapper mapper;
+    final private PedidoMapper pedidoMapper;
     final private UsuarioValidator validator;
 
     @Transactional
     public UsuarioDTO cadastrarUsuario(CadastrarUsuarioCommand usuarioCmd) {
-
         Usuario usuario = mapper.fromCommand(usuarioCmd);
-
         validator.validar(usuario);
-
         Usuario usuarioSalvo = repository.save(usuario);
-
         logger.atInfo().log("Usuário " + usuario.getId().toString() + " cadastrado");
-
         return mapper.toDTO(usuarioSalvo);
     }
 
@@ -50,7 +53,7 @@ public class UsuarioService {
         return mapper.toDTO(usuario);
     }
 
-    public Page<UsuarioDTO> pesquisarListagem(String nome, String email, Integer numeroPagina, Integer tamanhoPagina){
+    public Page<UsuarioDTO> pesquisarListagem(String nome, String email, Integer numeroPagina, Integer tamanhoPagina) {
         Specification<Usuario> usuarioSpecs = UsuarioSpecs.initialize();
 
         if (nome != null) usuarioSpecs = usuarioSpecs.and(UsuarioSpecs.nomeLike(nome));
@@ -60,5 +63,14 @@ public class UsuarioService {
 
         return repository.findAll(usuarioSpecs, pageable).map(mapper::toDTO);
 
+    }
+
+    public AbrirPedidoResponseDTO abrirNovoPedido(UUID id) {
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
+        if (pedidoRepository.existsByUsuarioAndStatus(usuario, StatusPedido.PENDENTE)) throw new RegraDeNegocioException("Usuário já tem um pedido pendente");
+
+        Pedido pedido = new Pedido(usuario);
+        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        return pedidoMapper.toAbrirPedidoResponseDto(pedidoSalvo);
     }
 }

@@ -1,6 +1,7 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.CadastrarUsuarioCommand;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.AbrirPedidoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common.GenericController;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usuario.UsuarioDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioService;
@@ -42,5 +43,12 @@ public class UsuarioController implements GenericController {
     ){
         Page<UsuarioDTO> pagina = service.pesquisarListagem(nome, email, numeroPagina, tamanhoPagina);
         return ResponseEntity.ok(pagina);
+    }
+
+    @PostMapping("{id}/pedidos")
+    public ResponseEntity<Object> abrirNovoPedido (@PathVariable UUID id){
+        var response = service.abrirNovoPedido(id);
+        URI uri = gerarHeaderLocation(response.id().toString());
+        return ResponseEntity.created(uri).body(response);
     }
 }
