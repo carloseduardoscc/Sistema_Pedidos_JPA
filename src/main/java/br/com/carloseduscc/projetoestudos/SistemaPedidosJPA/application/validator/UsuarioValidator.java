@@ -21,12 +21,12 @@ public class UsuarioValidator {
     final PedidoRepository pedidoRepository;
 
     public void validar(Usuario usuario){
-        if (emailJaExiste(usuario)){
-            throw new RegistroDuplicadoException("E-mail %s já existe".formatted(usuario.getEmail()));
-        }
+        validarEmailJaExiste(usuario.getEmail());
     }
 
-    private boolean emailJaExiste(Usuario usuario) {
-        return repository.existsByEmail(usuario.getEmail());
+    public void validarEmailJaExiste(String email) {
+        if (repository.existsByEmail(email)){
+            throw new RegistroDuplicadoException("E-mail %s já existe".formatted(email));
+        }
     }
 }
