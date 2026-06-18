@@ -58,4 +58,10 @@ public class UsuarioController implements GenericController {
         URI uri = gerarHeaderLocation(response.id().toString());
         return ResponseEntity.created(uri).body(response);
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> desativarUsuario(@PathVariable UUID id){
+        service.desativarUsuario(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -87,4 +87,10 @@ public class UsuarioService {
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
         return pedidoMapper.toAbrirPedidoResponseDto(pedidoSalvo);
     }
+
+    @Transactional
+    public void desativarUsuario(UUID id){
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
+        usuario.setAtivo(false);
+    }
 }
