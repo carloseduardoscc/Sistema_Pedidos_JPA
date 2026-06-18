@@ -40,6 +40,10 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     List<Pedido> pedidos;
 
+    // Estado
+    @Column(name = "ativo")
+    Boolean ativo;
+
     // Auditoria
     @CreatedDate
     @Column(name = "data_cadastro")
