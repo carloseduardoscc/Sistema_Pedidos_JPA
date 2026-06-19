@@ -6,6 +6,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedi
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usuario.UsuarioDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.PedidoMapper;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.UsuarioMapper;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.ports.DomainEventPublisher;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.validator.UsuarioValidator;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
@@ -39,6 +40,7 @@ public class UsuarioService {
     final private UsuarioMapper mapper;
     final private PedidoMapper pedidoMapper;
     final private UsuarioValidator validator;
+    final private DomainEventPublisher eventPublisher;
 
     @Transactional
     public UsuarioDTO cadastrarUsuario(CadastrarUsuarioCommand usuarioCmd) {
@@ -91,9 +93,9 @@ public class UsuarioService {
     @Transactional
     public void desativarUsuario(UUID id){
         Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
-
         validator.validarDesativacao(usuario);
-
         usuario.setAtivo(false);
+
+        eventPublisher.publish(mapper.toUsuarioDesativadoEvent(usuario));
     }
 }
