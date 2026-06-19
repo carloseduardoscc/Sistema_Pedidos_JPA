@@ -1,4 +1,4 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 

@@ -1,8 +1,7 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.projections.ItemPedidoDetalhadoProjection;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.projections.ItemPedidoDetalhadoProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -3,7 +3,7 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_f
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
-import static br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.specs.PedidoSpecs.*;
+import static br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.specs.PedidoSpecs.*;
 
 import java.time.LocalDateTime;
 

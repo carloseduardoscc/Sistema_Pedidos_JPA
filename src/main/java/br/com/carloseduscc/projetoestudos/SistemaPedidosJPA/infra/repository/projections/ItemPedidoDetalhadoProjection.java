@@ -1,4 +1,4 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.projections;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.projections;
 
 import java.math.BigDecimal;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception;
 
 public class RegraDeNegocioException extends RuntimeException {
     public RegraDeNegocioException(String message) {

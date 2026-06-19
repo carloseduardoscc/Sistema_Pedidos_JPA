@@ -1,11 +1,11 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.erro.CampoErro;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.erro.ErroResposta;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.OperacaoNaoPermitidaException;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegistroDuplicadoException;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegraDeNegocioException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.NaoEncontradoException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.OperacaoNaoPermitidaException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.RegistroDuplicadoException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

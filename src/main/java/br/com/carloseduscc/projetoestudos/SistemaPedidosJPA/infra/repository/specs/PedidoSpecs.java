@@ -1,7 +1,6 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.specs;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.specs;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;

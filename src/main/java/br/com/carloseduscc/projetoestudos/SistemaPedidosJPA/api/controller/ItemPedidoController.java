@@ -1,7 +1,7 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.ItemPedidoService;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common.GenericController;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common.GenericController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

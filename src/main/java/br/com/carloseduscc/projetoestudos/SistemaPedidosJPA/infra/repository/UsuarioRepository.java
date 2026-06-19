@@ -1,4 +1,4 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
