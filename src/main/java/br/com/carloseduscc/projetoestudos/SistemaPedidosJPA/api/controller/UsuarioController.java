@@ -1,9 +1,8 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AtualizarDadosUsuarioCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.CadastrarUsuarioCommand;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.AbrirPedidoResponseDTO;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.controller.common.GenericController;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common.GenericController;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usuario.UsuarioDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioService;
 import jakarta.validation.Valid;
@@ -57,5 +56,11 @@ public class UsuarioController implements GenericController {
         var response = service.abrirNovoPedido(id);
         URI uri = gerarHeaderLocation(response.id().toString());
         return ResponseEntity.created(uri).body(response);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> desativarUsuario(@PathVariable UUID id){
+        service.desativarUsuario(id);
+        return ResponseEntity.noContent().build();
     }
 }

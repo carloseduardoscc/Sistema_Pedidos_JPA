@@ -6,15 +6,16 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedi
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usuario.UsuarioDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.PedidoMapper;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.UsuarioMapper;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.ports.DomainEventPublisher;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.validator.UsuarioValidator;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.NaoEncontradoException;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception.RegraDeNegocioException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.NaoEncontradoException;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.PedidoRepository;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.UsuarioRepository;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.specs.UsuarioSpecs;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.specs.UsuarioSpecs;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -39,13 +40,14 @@ public class UsuarioService {
     final private UsuarioMapper mapper;
     final private PedidoMapper pedidoMapper;
     final private UsuarioValidator validator;
+    final private DomainEventPublisher eventPublisher;
 
     @Transactional
     public UsuarioDTO cadastrarUsuario(CadastrarUsuarioCommand usuarioCmd) {
         Usuario usuario = mapper.fromCommand(usuarioCmd);
         validator.validar(usuario);
         Usuario usuarioSalvo = repository.save(usuario);
-        logger.atInfo().log("Usuário " + usuario.getId().toString() + " cadastrado");
+        eventPublisher.publish(mapper.toUsuarioCadastradoEvent(usuario));
         return mapper.toDTO(usuarioSalvo);
     }
 
@@ -86,5 +88,14 @@ public class UsuarioService {
         Pedido pedido = new Pedido(usuario);
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
         return pedidoMapper.toAbrirPedidoResponseDto(pedidoSalvo);
+    }
+
+    @Transactional
+    public void desativarUsuario(UUID id){
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
+        validator.validarDesativacao(usuario);
+        usuario.setAtivo(false);
+
+        eventPublisher.publish(mapper.toUsuarioDesativadoEvent(usuario));
     }
 }

@@ -11,3 +11,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
+logging:
+  level:
+    ACCESS_LOGGER: DEBUG

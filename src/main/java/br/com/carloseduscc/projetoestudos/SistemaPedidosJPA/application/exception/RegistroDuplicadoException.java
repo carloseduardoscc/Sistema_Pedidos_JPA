@@ -1,4 +1,4 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.exception;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception;
 
 public class RegistroDuplicadoException extends RuntimeException{
     public RegistroDuplicadoException(String message) {

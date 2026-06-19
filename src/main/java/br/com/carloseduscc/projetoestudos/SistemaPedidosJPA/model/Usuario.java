@@ -24,6 +24,7 @@ public class Usuario {
 
     {
         this.pedidos = new ArrayList<>();
+        this.ativo = true;
     }
 
     @Id
@@ -39,6 +40,10 @@ public class Usuario {
     // Relação
     @OneToMany(mappedBy = "usuario")
     List<Pedido> pedidos;
+
+    // Estado
+    @Column(name = "ativo")
+    Boolean ativo;
 
     // Auditoria
     @CreatedDate

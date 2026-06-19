@@ -5,8 +5,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.item
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.item.ItemResumoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.ItemAdicionadoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.repository.projections.ItemPedidoDetalhadoProjection;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.projections.ItemPedidoDetalhadoProjection;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
