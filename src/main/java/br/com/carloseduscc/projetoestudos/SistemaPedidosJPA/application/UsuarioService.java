@@ -91,6 +91,9 @@ public class UsuarioService {
     @Transactional
     public void desativarUsuario(UUID id){
         Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
+
+        validator.validarDesativacao(usuario);
+
         usuario.setAtivo(false);
     }
 }

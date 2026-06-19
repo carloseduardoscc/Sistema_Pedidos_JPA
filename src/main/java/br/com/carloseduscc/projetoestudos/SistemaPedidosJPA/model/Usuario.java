@@ -24,6 +24,7 @@ public class Usuario {
 
     {
         this.pedidos = new ArrayList<>();
+        this.ativo = true;
     }
 
     @Id
