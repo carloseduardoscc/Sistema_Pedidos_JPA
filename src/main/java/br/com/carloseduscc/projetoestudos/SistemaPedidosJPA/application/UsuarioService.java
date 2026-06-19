@@ -47,7 +47,7 @@ public class UsuarioService {
         Usuario usuario = mapper.fromCommand(usuarioCmd);
         validator.validar(usuario);
         Usuario usuarioSalvo = repository.save(usuario);
-        logger.atInfo().log("Usuário " + usuario.getId().toString() + " cadastrado");
+        eventPublisher.publish(mapper.toUsuarioCadastradoEvent(usuario));
         return mapper.toDTO(usuarioSalvo);
     }
 
