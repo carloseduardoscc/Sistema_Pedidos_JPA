@@ -75,12 +75,12 @@ public class Pedido {
     }
 
     public void adicionarItem(ItemPedido item) {
-        validarAdicaoDeItem(item);
+        validarItemNoPedido(item);
         itens.add(item);
         item.setPedido(this);
     }
 
-    private void validarAdicaoDeItem(ItemPedido item) {
+    public void validarItemNoPedido(ItemPedido item) {
         if (item.getQuantidade() <= 0) {
             throw new RegraDeNegocioException("Quantidade negativa!");
         }
@@ -95,7 +95,7 @@ public class Pedido {
             throw new RegraDeNegocioException("Total ultrapassou " + Formatador.formatarDinheiro(VALOR_TOTAL_MAXIMO_PEDIDO));
         }
         if (status != StatusPedido.PENDENTE) {
-            throw new RegraDeNegocioException("Tentou adicionar um item a um pedido que não estava pendente!");
+            throw new RegraDeNegocioException("Tentou alterar o pedido que não estava pendente!");
         }
     }
 }

@@ -1,5 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
@@ -48,4 +49,12 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecif
     boolean existsByUsuarioAndStatusIn(Usuario usuario, List<StatusPedido> status);
 
     boolean existsByUsuarioAndStatus(Usuario usuario, StatusPedido status);
+
+    @Query("""
+    SELECT p
+    FROM Pedido p
+    JOIN FETCH p.itens i
+    WHERE i.id = :id
+""")
+    Optional<Pedido> buscarPedidoPorItemId(@Param("id") UUID id);
 }
