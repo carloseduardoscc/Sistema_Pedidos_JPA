@@ -21,4 +21,9 @@ public class ItemPedidoController implements GenericController {
         return ResponseEntity.ok(responseDTO);
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> removerItem(@PathVariable UUID id){
+        service.removerItem(id);
+        return ResponseEntity.noContent().build();
+    }
 }
