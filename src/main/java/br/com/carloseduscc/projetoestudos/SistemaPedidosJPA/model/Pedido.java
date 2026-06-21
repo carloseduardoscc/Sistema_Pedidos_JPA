@@ -92,7 +92,7 @@ public class Pedido {
         }
         double totalSomadoNovoItem = getTotal().doubleValue() + (item.getPrecoUnitario().doubleValue() * item.getQuantidade());
         if (totalSomadoNovoItem > VALOR_TOTAL_MAXIMO_PEDIDO) {
-            throw new RegraDeNegocioException("Total ultrapassou " + Formatador.formatarDinheiro(VALOR_TOTAL_MAXIMO_PEDIDO));
+            throw new RegraDeNegocioException("Total do pedido ultrapassou " + Formatador.formatarDinheiro(VALOR_TOTAL_MAXIMO_PEDIDO));
         }
         if (status != StatusPedido.PENDENTE) {
             throw new RegraDeNegocioException("Tentou alterar o pedido que não estava pendente!");
