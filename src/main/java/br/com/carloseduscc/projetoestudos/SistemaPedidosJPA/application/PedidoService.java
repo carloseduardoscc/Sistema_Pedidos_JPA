@@ -15,6 +15,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,9 +136,5 @@ public class PedidoService {
         Pageable pageable = PageRequest.of(parametros.getPage(), parametros.getSize());
         Page<Pedido> page = pedidoRepository.findAll(parametros.toSpecification(), pageable);
         return page.map(mapper::toDTO);
-    }
-
-    public void removerItem (UUID idItem){
-
     }
 }
