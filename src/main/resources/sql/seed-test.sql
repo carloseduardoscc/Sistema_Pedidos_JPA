@@ -1,0 +1,152 @@
+-- ==========================
+-- USUÁRIOS
+-- ==========================
+
+INSERT INTO order_management.usuario_tb
+(id, ativo, data_cadastro, data_atualizacao, email, nome, version)
+VALUES
+    ('11111111-1111-1111-1111-111111111111', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'carlos@email.com', 'Carlos Eduardo', 0),
+    ('22222222-2222-2222-2222-222222222222', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'maria@email.com', 'Maria Silva', 0),
+    ('33333333-3333-3333-3333-333333333333', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'joao@email.com', 'Joao Santos', 0),
+    ('44444444-4444-4444-4444-444444444444', FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ana@email.com', 'Ana Costa', 0);
+
+
+-- ==========================
+-- PEDIDOS
+-- ==========================
+
+INSERT INTO order_management.pedido_tb
+(id, data_cadastro, data_atualizacao, data_hora_pedido, status, version, usuario_id, id_usuario)
+VALUES
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     DATEADD('DAY', -5, CURRENT_TIMESTAMP),
+     'PAGO',
+     0,
+     '11111111-1111-1111-1111-111111111111',
+     '11111111-1111-1111-1111-111111111111'),
+
+    ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     DATEADD('DAY', -3, CURRENT_TIMESTAMP),
+     'PAGO',
+     0,
+     '11111111-1111-1111-1111-111111111111',
+     '11111111-1111-1111-1111-111111111111'),
+
+    ('cccccccc-cccc-cccc-cccc-cccccccccccc',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     DATEADD('DAY', -2, CURRENT_TIMESTAMP),
+     'CANCELADO',
+     0,
+     '22222222-2222-2222-2222-222222222222',
+     '22222222-2222-2222-2222-222222222222'),
+
+    ('dddddddd-dddd-dddd-dddd-dddddddddddd',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     DATEADD('DAY', -1, CURRENT_TIMESTAMP),
+     'RECEBIDO',
+     0,
+     '33333333-3333-3333-3333-333333333333',
+     '33333333-3333-3333-3333-333333333333'),
+
+    ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     'PENDENTE',
+     0,
+     '33333333-3333-3333-3333-333333333333',
+     '33333333-3333-3333-3333-333333333333');
+
+
+-- ==========================
+-- ITENS PEDIDO
+-- ==========================
+
+INSERT INTO order_management.item_pedido_tb
+(id, data_cadastro, data_atualizacao, nome_produto, preco_unitario, quantidade, version, pedido_id, id_usuario)
+VALUES
+    ('10000000-0000-0000-0000-000000000001',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     'Notebook Dell',
+     3500.00,
+     1,
+     0,
+     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+     '11111111-1111-1111-1111-111111111111'),
+
+    ('10000000-0000-0000-0000-000000000002',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     'Mouse Logitech',
+     120.00,
+     2,
+     0,
+     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+     '11111111-1111-1111-1111-111111111111'),
+
+    ('10000000-0000-0000-0000-000000000003',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     'Teclado Mecanico',
+     280.00,
+     1,
+     0,
+     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+     '11111111-1111-1111-1111-111111111111'),
+
+    ('10000000-0000-0000-0000-000000000004',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     'Monitor LG 24',
+     950.00,
+     2,
+     0,
+     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+     '11111111-1111-1111-1111-111111111111'),
+
+    ('10000000-0000-0000-0000-000000000005',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     'Headset HyperX',
+     420.00,
+     1,
+     0,
+     'cccccccc-cccc-cccc-cccc-cccccccccccc',
+     '22222222-2222-2222-2222-222222222222'),
+
+    ('10000000-0000-0000-0000-000000000006',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     'Cadeira Gamer',
+     1800.00,
+     1,
+     0,
+     'dddddddd-dddd-dddd-dddd-dddddddddddd',
+     '33333333-3333-3333-3333-333333333333'),
+
+    ('10000000-0000-0000-0000-000000000007',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     'Webcam Logitech',
+     350.00,
+     3,
+     0,
+     'dddddddd-dddd-dddd-dddd-dddddddddddd',
+     '33333333-3333-3333-3333-333333333333'),
+
+    ('10000000-0000-0000-0000-000000000008',
+     CURRENT_TIMESTAMP,
+     CURRENT_TIMESTAMP,
+     'Suporte duplo monitor',
+     240.00,
+     1,
+     0,
+     'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
+     '33333333-3333-3333-3333-333333333333');

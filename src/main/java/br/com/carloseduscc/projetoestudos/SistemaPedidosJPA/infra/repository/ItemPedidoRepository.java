@@ -2,7 +2,9 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.projections.ItemPedidoDetalhadoProjection;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -23,4 +25,12 @@ public interface ItemPedidoRepository extends JpaRepository<ItemPedido, UUID> {
     where i.id = :idItem
 """)
     Optional<ItemPedidoDetalhadoProjection> buscarItemPedidoDetalhadoProjection(@Param("idItem") UUID id);
+
+    @Modifying
+    @Query("""
+    DELETE FROM ItemPedido i
+    WHERE i.id = :id
+    AND i.pedido.status = br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido.PENDENTE
+""")
+    int deleteByIdIfPedidoPendente(@Param("id") UUID id);
 }

@@ -136,4 +136,8 @@ public class PedidoService {
         Page<Pedido> page = pedidoRepository.findAll(parametros.toSpecification(), pageable);
         return page.map(mapper::toDTO);
     }
+
+    public void removerItem (UUID idItem){
+
+    }
 }
