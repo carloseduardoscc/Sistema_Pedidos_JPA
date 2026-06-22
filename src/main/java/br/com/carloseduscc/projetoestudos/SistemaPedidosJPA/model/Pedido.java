@@ -98,4 +98,9 @@ public class Pedido {
             throw new RegraDeNegocioException("Tentou alterar o pedido que não estava pendente!");
         }
     }
+
+    public void setStatus(StatusPedido status){
+        this.status.validarTransacao(status);
+        this.status = status;
+    }
 }

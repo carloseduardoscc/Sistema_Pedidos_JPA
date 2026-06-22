@@ -1,11 +1,13 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AlterarStatusCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.ItemAdicionadoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDetalhadoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.ItemPedidoMapper;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.PedidoMapper;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.ports.DomainEventPublisher;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_filters.RequisicaoFiltroPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
@@ -15,6 +17,8 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.PedidoAbertoEvent;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.PedidoTeveStatusModificadoEvent;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -39,7 +43,7 @@ public class PedidoService {
     private final ItemPedidoRepository itemPedidoRepository;
     private final ItemPedidoMapper itemPedidoMapper;
     private final PedidoMapper mapper;
-    private static final Logger logger = LoggerFactory.getLogger("ACCESS_LOGGER");
+    final private DomainEventPublisher eventPublisher;
 
     @Transactional
     public Pedido abrirPedido(UUID idUsuario) {
@@ -50,7 +54,7 @@ public class PedidoService {
 
         pedidoRepository.save(pedido);
 
-        logger.atInfo().log("Adicionado pedido " + pedido.getId().toString() + " ao usuário " + idUsuario.toString() + " ");
+        eventPublisher.publish(new PedidoAbertoEvent(pedido));
 
         return pedido;
     }
@@ -114,7 +118,6 @@ public class PedidoService {
     @Transactional
     void cadastrarPedidoComItem(Pedido pedido, String nomeItem, Integer quantidadeItem, BigDecimal precounitarioItem){
         pedidoRepository.save(pedido);
-        logger.atInfo().log("Pedido salvo!");
 
         ItemPedido item = new ItemPedido();
         item.setNomeProduto(nomeItem);
@@ -124,11 +127,10 @@ public class PedidoService {
         pedido.adicionarItem(item);
 
         itemPedidoRepository.save(item);
-        logger.atInfo().log("Item do pedido salvo!");
     }
 
-    public PedidoDetalhadoDTO obterDetalhes(UUID idPedido) {
-        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + " não encontrado"));
+    public PedidoDetalhadoDTO obterDetalhes(UUID id) {
+        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(id).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
         return mapper.toDTODetalhado(pedido);
     }
 
@@ -136,5 +138,14 @@ public class PedidoService {
         Pageable pageable = PageRequest.of(parametros.getPage(), parametros.getSize());
         Page<Pedido> page = pedidoRepository.findAll(parametros.toSpecification(), pageable);
         return page.map(mapper::toDTO);
+    }
+
+    @Transactional
+    public void mudarStatus(UUID id, AlterarStatusCommand status){
+        Pedido pedido = pedidoRepository.buscarPedidoComUsuarioJoinFetch(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
+        StatusPedido antigoStatus = pedido.getStatus();
+        pedido.setStatus(status.statusPedido());
+
+        eventPublisher.publish(new PedidoTeveStatusModificadoEvent(antigoStatus, pedido));
     }
 }
