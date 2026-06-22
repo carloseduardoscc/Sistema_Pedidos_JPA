@@ -142,7 +142,7 @@ public class PedidoService {
 
     @Transactional
     public void mudarStatus(UUID id, AlterarStatusCommand status){
-        Pedido pedido = pedidoRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
+        Pedido pedido = pedidoRepository.buscarPedidoComUsuarioJoinFetch(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
         StatusPedido antigoStatus = pedido.getStatus();
         pedido.setStatus(status.statusPedido());
 

@@ -18,8 +18,9 @@ public class PedidoEventLogger {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(PedidoTeveStatusModificadoEvent event){
         logger.atDebug().log(
-                "Pedido {} mudou do status {} para {}",
+                "Pedido {} do usuário {} mudou do status {} para {}",
                 event.pedido().getId(),
+                event.pedido().getUsuario().getEmail(),
                 event.antigoStatus().toString().toLowerCase(),
                 event.pedido().getStatus().toString().toLowerCase()
         );
