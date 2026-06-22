@@ -1,4 +1,4 @@
-package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.events;
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.events;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.ports.DomainEventPublisher;
 import lombok.RequiredArgsConstructor;
