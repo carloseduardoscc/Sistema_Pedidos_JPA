@@ -99,8 +99,8 @@ public class Pedido {
         }
     }
 
-    public void setStatusPedido(StatusPedido status){
-        status.validarTransacao(status);
+    public void setStatus(StatusPedido status){
+        this.status.validarTransacao(status);
         this.status = status;
     }
 }

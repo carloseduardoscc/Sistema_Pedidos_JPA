@@ -1,6 +1,7 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AlterarStatusCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.ItemAdicionadoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDetalhadoDTO;
@@ -139,10 +140,11 @@ public class PedidoService {
         return page.map(mapper::toDTO);
     }
 
-    public void mudarStatus(UUID id, StatusPedido statusPedido){
+    @Transactional
+    public void mudarStatus(UUID id, AlterarStatusCommand status){
         Pedido pedido = pedidoRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
         StatusPedido antigoStatus = pedido.getStatus();
-        pedido.setStatus(statusPedido);
+        pedido.setStatus(status.statusPedido());
 
         eventPublisher.publish(new PedidoTeveStatusModificadoEvent(antigoStatus, pedido));
     }
