@@ -3,8 +3,6 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.events;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.PedidoAbertoEvent;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.PedidoTeveStatusModificadoEvent;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.UsuarioCadastradoEvent;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.UsuarioDesativadoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

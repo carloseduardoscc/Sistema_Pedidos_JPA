@@ -3,9 +3,10 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_f
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
-import static br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.specs.PedidoSpecs.*;
 
 import java.time.LocalDateTime;
+
+import static br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.specs.PedidoSpecs.*;
 
 @Data
 public class RequisicaoFiltroPedido {

@@ -4,8 +4,8 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.A
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.item.ItemDetalhadoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.item.ItemResumoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.ItemAdicionadoResponseDTO;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.projections.ItemPedidoDetalhadoProjection;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

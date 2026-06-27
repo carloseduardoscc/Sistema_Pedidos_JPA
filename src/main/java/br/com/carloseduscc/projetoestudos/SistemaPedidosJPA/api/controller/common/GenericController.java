@@ -3,7 +3,6 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.comm
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.UUID;
 
 public interface GenericController {
     default URI gerarHeaderLocation (String id){
