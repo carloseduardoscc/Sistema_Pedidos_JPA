@@ -1,12 +1,11 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common.GenericController;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.PedidoService;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AlterarStatusCommand;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_filters.RequisicaoFiltroPedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common.GenericController;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

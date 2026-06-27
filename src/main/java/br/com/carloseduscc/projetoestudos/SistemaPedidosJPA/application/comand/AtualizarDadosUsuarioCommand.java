@@ -1,7 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record AtualizarDadosUsuarioCommand(
