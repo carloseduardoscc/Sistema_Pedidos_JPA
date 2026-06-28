@@ -64,4 +64,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecif
     WHERE p.id = :id
 """)
     Optional<Pedido> buscarPedidoComUsuarioJoinFetch(@Param("id") UUID id);
+
+    boolean existsByIdAndUsuarioId(UUID idPedido, UUID id);
 }

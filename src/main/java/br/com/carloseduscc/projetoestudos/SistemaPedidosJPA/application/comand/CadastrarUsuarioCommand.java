@@ -1,9 +1,12 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Roles;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-import java.util.List;
+import java.util.Set;
 
 public record CadastrarUsuarioCommand
         (
@@ -19,6 +22,6 @@ public record CadastrarUsuarioCommand
                 @Size(max= 300, message = "a senha deve ter menos que 300 caracteres")
                 String senha,
                 @NotNull(message = "campo obrigatório")
-                List<Roles> roles
+                Set<Roles> roles
         ) {
 }

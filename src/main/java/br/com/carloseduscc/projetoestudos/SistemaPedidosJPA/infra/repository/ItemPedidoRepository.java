@@ -34,4 +34,15 @@ public interface ItemPedidoRepository extends JpaRepository<ItemPedido, UUID> {
     AND i.pedido.status = br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido.PENDENTE
 """)
     int deleteByIdIfPedidoPendente(@Param("id") UUID id);
+
+//    @Query("""
+//    SELECT CASE
+//        WHEN COUNT(i) > 0 THEN true
+//        ELSE false
+//    END
+//    FROM ItemPedido i
+//    WHERE i.id = :itemId
+//        AND i.pedido.usuario.id = :usuarioId
+//""")
+    boolean existsByIdAndPedidoUsuarioId(UUID itemId, UUID usuarioId);
 }

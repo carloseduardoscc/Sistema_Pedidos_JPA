@@ -1,5 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.autorizacao.SomenteDonoItemOuAdmin;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common.GenericController;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.ItemPedidoService;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AtualizarItemCommand;
@@ -17,21 +18,24 @@ public class ItemPedidoController implements GenericController {
 
     public final ItemPedidoService service;
 
-    @GetMapping("{id}")
-    public ResponseEntity<Object> buscarDetalhes(@PathVariable UUID id){
-        var responseDTO = service.buscarDetalhes(id);
+    @GetMapping("{itemId}")
+    @SomenteDonoItemOuAdmin
+    public ResponseEntity<Object> buscarDetalhes(@PathVariable UUID itemId){
+        var responseDTO = service.buscarDetalhes(itemId);
         return ResponseEntity.ok(responseDTO);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Object> removerItem(@PathVariable UUID id){
-        service.removerItem(id);
+    @PatchMapping("{itemId}")
+    @SomenteDonoItemOuAdmin
+    public ResponseEntity<Object> atualizarItem(@PathVariable UUID itemId, @RequestBody @Valid AtualizarItemCommand dados){
+        service.atualizarItem(dados, itemId);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("{id}")
-    public ResponseEntity<Object> atualizarItem(@PathVariable UUID id, @RequestBody @Valid AtualizarItemCommand dados){
-        service.atualizarItem(dados, id);
+    @DeleteMapping("{itemId}")
+    @SomenteDonoItemOuAdmin
+    public ResponseEntity<Object> removerItem(@PathVariable UUID itemId){
+        service.removerItem(itemId);
         return ResponseEntity.noContent().build();
     }
 }
