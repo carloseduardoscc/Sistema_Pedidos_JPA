@@ -48,7 +48,7 @@ public class UsuarioService {
     public UsuarioDTO cadastrarUsuario(CadastrarUsuarioCommand usuarioCmd) {
         Usuario usuario = mapper.fromCommand(usuarioCmd);
         usuario.setSenha(encoder.encode(usuario.getSenha()));
-        validator.validar(usuario);
+        validator.validarCadastro(usuario);
         Usuario usuarioSalvo = repository.save(usuario);
         eventPublisher.publish(mapper.toUsuarioCadastradoEvent(usuario));
         return mapper.toDTO(usuarioSalvo);

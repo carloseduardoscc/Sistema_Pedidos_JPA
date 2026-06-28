@@ -5,11 +5,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usua
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.UsuarioCadastradoEvent;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.UsuarioDesativadoEvent;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
