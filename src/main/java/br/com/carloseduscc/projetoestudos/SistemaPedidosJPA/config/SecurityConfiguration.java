@@ -1,8 +1,10 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.config;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioService;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
@@ -24,12 +28,25 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http){
         return http
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable())
+                )
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+                    corsConfig.setAllowedOriginPatterns(List.of("*"));
+                    corsConfig.setAllowedMethods(List.of("*"));
+                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true);
+                    return corsConfig;
+                }))
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(configurer -> {
                     configurer.loginPage("/login").permitAll();
                 })
                 .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/h2-console/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .build();
@@ -42,20 +59,20 @@ public class SecurityConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService(UsuarioService usuarioService, PasswordEncoder encoder){
-        UserDetails user1 = User.builder()
-                .username("admin@email.com")
-                .password(encoder.encode("321"))
-                .roles("ADMIN")
-                .build();
+//        UserDetails user1 = User.builder()
+//                .username("admin@email.com")
+//                .password(encoder.encode("321"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        UserDetails user2 = User.builder()
+//                .username("user@email.com")
+//                .password(encoder.encode("123"))
+//                .roles("USER")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user1, user2);
 
-        UserDetails user2 = User.builder()
-                .username("user@email.com")
-                .password(encoder.encode("123"))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user1, user2);
-
-//        return new CustomUserDetailsService(usuarioService);
+        return new CustomUserDetailsService(usuarioService);
     }
 }

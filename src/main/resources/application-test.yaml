@@ -25,3 +25,4 @@ spring:
 logging:
   level:
     ACCESS_LOGGER: DEBUG
+    #    org.springframework.security: DEBUG

@@ -3,13 +3,53 @@
 -- ==========================
 
 INSERT INTO order_management.usuario_tb
-(id, ativo, data_cadastro, data_atualizacao, email, nome, version)
+(id, ativo, data_cadastro, data_atualizacao, email, nome, senha, roles, version)
 VALUES
-    ('11111111-1111-1111-1111-111111111111', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'carlos@email.com', 'Carlos Eduardo', 0),
-    ('22222222-2222-2222-2222-222222222222', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'maria@email.com', 'Maria Silva', 0),
-    ('33333333-3333-3333-3333-333333333333', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'joao@email.com', 'Joao Santos', 0),
-    ('44444444-4444-4444-4444-444444444444', FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ana@email.com', 'Ana Costa', 0);
-
+    (
+        '11111111-1111-1111-1111-111111111111',
+        TRUE,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        'carlos@email.com',
+        'Carlos Eduardo',
+        '$2a$10$rZjDpBft/x0vXoJykBwfBuj8.I6BxnfBJWM4W6NldVH5APb8gBN7q',
+        ARRAY['ADMIN'],
+        0
+    ),
+    (
+        '22222222-2222-2222-2222-222222222222',
+        TRUE,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        'maria@email.com',
+        'Maria Silva',
+        '$2a$10$rZjDpBft/x0vXoJykBwfBuj8.I6BxnfBJWM4W6NldVH5APb8gBN7q',
+        ARRAY['CLIENTE'],
+        0
+    ),
+    (
+        '33333333-3333-3333-3333-333333333333',
+        TRUE,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        'joao@email.com',
+        'Joao Santos',
+        '$2a$10$rZjDpBft/x0vXoJykBwfBuj8.I6BxnfBJWM4W6NldVH5APb8gBN7q',
+        ARRAY['CLIENTE'],
+        0
+    ),
+    (
+        '44444444-4444-4444-4444-444444444444',
+        FALSE,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        'ana@email.com',
+        'Ana Costa',
+        '$2a$10$rZjDpBft/x0vXoJykBwfBuj8.I6BxnfBJWM4W6NldVH5APb8gBN7q',
+        ARRAY['CLIENTE'],
+        0
+    );
+-- $2a$10$rZjDpBft/x0vXoJykBwfBuj8.I6BxnfBJWM4W6NldVH5APb8gBN7q
 
 -- ==========================
 -- PEDIDOS
