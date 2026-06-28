@@ -21,12 +21,6 @@ public class UsuarioController implements GenericController {
 
     private final UsuarioService service;
 
-    @PostMapping
-    public ResponseEntity<Object> cadastrar(@RequestBody @Valid CadastrarUsuarioCommand usuarioCmd){
-        UsuarioDTO usuarioSalvo = service.cadastrarUsuario(usuarioCmd);
-        URI uri = gerarHeaderLocation(usuarioSalvo.id());
-        return ResponseEntity.created(uri).body(usuarioSalvo);
-    }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> buscarDetalhes(@PathVariable UUID id){
