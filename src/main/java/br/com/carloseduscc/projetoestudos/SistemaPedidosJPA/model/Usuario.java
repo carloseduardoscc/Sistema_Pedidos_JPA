@@ -1,7 +1,9 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model;
 
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -35,6 +37,13 @@ public class Usuario {
 
     @Column(name = "email", length = 254, unique = true)
     private String email;
+
+    @Column
+    private String senha;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "roles")
+    private List<Roles> roles;
 
     // Relação
     @OneToMany(mappedBy = "usuario")
