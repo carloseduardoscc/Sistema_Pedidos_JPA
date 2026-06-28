@@ -1,12 +1,12 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioService;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Roles;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,11 +33,24 @@ public class CustomUserDetailsService implements UserDetailsService {
         Usuario usuario = usuarioOpt.get();
 
 
-        return User.builder()
-                .username(usuario.getEmail())
-                .password(usuario.getSenha())
-                .disabled(!usuario.getAtivo())
-                .roles(usuario.getRoles().stream().map(Roles::toString).collect(Collectors.joining()))
-                .build();
+//        return User.builder()
+//                .username(usuario.getEmail())
+//                .password(usuario.getSenha())
+//                .disabled(!usuario.getAtivo())
+//                .roles(usuario.getRoles().stream().map(Roles::toString).collect(Collectors.joining()))
+//                .build();
+
+        return new CustomUser(
+                usuario.getId(),
+                usuario.getEmail(),
+                usuario.getSenha(),
+                usuario.getAtivo(),
+                true,
+                true,
+                true,
+                usuario.getRoles().stream()
+                        .map(r->new SimpleGrantedAuthority("ROLE_"+r.toString()))
+                        .collect(Collectors.toCollection(ArrayList<GrantedAuthority>::new))
+        );
     }
 }
