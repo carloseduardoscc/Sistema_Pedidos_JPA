@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,10 +42,12 @@ public class UsuarioService {
     final private PedidoMapper pedidoMapper;
     final private UsuarioValidator validator;
     final private DomainEventPublisher eventPublisher;
+    final private PasswordEncoder encoder;
 
     @Transactional
     public UsuarioDTO cadastrarUsuario(CadastrarUsuarioCommand usuarioCmd) {
         Usuario usuario = mapper.fromCommand(usuarioCmd);
+        usuario.setSenha(encoder.encode(usuario.getSenha()));
         validator.validar(usuario);
         Usuario usuarioSalvo = repository.save(usuario);
         eventPublisher.publish(mapper.toUsuarioCadastradoEvent(usuario));
@@ -97,5 +100,9 @@ public class UsuarioService {
         usuario.setAtivo(false);
 
         eventPublisher.publish(mapper.toUsuarioDesativadoEvent(usuario));
+    }
+
+    public Optional<Usuario> obterPorLogin(String login) {
+        return repository.findByEmail(login);
     }
 }
