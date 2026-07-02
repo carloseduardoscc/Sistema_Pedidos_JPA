@@ -1,6 +1,18 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model;
 
+import java.util.Set;
+
 public enum Roles {
     ADMIN,
-    CLIENTE
+    CLIENTE,
+    ENTREGADOR,
+    LOJISTA;
+
+    public static Set<Roles> getFuncionarios(){
+        return Set.of(ADMIN, ENTREGADOR, LOJISTA);
+    }
+
+    public static Roles getRolePadrao(){
+        return CLIENTE;
+    }
 }

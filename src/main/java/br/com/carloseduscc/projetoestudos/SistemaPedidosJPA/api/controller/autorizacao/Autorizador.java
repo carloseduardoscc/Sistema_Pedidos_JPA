@@ -16,26 +16,12 @@ public class Autorizador {
     private final PedidoRepository pedidoRepository;
     private final ItemPedidoRepository itemPedidoRepository;
 
-    public boolean podeAcessarPedido(UUID idPedido, Authentication authentication){
-        CustomUser usuario = (CustomUser) authentication.getPrincipal();
-
-        if (usuario.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
-            return true;
-        }
-
-        return pedidoRepository.existsByIdAndUsuarioId(idPedido, usuario.getId());
+    public boolean isUsuarioDonoItem(UUID itemId, UUID usuarioId){
+        return itemPedidoRepository.findById(itemId).get().getPedido().getUsuario().getId().equals(usuarioId);
     }
 
-    public boolean podeAcessarItem(UUID idItem, Authentication authentication){
-        CustomUser usuario = (CustomUser) authentication.getPrincipal();
-
-        if (usuario.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
-            return true;
-        }
-
-        return itemPedidoRepository.existsByIdAndPedidoUsuarioId(idItem, usuario.getId());
+    public boolean isUsuarioDonoPedido(UUID pedidoId, UUID usuarioId){
+        return pedidoRepository.findById(pedidoId).get().getUsuario().getId().equals(usuarioId);
     }
 
 }
