@@ -13,10 +13,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_fi
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.*;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.PedidoAbertoEvent;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.PedidoTeveStatusModificadoEvent;
 import lombok.RequiredArgsConstructor;
@@ -137,12 +134,33 @@ public class PedidoService {
         return page.map(mapper::toDTO);
     }
 
-    @Transactional
-    public void mudarStatus(UUID id, AlterarStatusCommand status){
+    public void mudarStatus(UUID id, StatusPedido statusPedido){
         Pedido pedido = pedidoRepository.buscarPedidoComUsuarioJoinFetch(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
         StatusPedido antigoStatus = pedido.getStatus();
-        pedido.setStatus(status.statusPedido());
+        pedido.setStatus(statusPedido);
 
         eventPublisher.publish(new PedidoTeveStatusModificadoEvent(antigoStatus, pedido));
+    }
+
+    @Transactional
+    public void tornarPago(UUID id){
+        mudarStatus(id, StatusPedido.PAGO);
+    }
+
+    @Transactional
+    public void tornarEnviado(UUID id){
+        mudarStatus(id, StatusPedido.ENVIADO);
+
+    }
+
+    @Transactional
+    public void tornarEntregue(UUID id){
+        mudarStatus(id, StatusPedido.ENTREGUE);
+
+    }
+
+    @Transactional
+    public void tornarCancelado(UUID id){
+        mudarStatus(id, StatusPedido.CANCELADO);
     }
 }

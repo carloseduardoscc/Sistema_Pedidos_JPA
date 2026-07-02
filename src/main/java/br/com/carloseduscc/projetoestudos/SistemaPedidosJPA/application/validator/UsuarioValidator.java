@@ -25,8 +25,11 @@ public class UsuarioValidator {
     public void validarCadastro(Usuario usuario) {
         validarEmailJaExiste(usuario.getEmail());
 
-        if (usuario.getRoles().contains(Roles.ADMIN) && !securityService.usuarioLogadoContemRole(Roles.ADMIN)){
-            throw new AccessDeniedException("Apenas usuários Administradores autenticados podem cadastrar novos usuários também Administradores");
+        if (
+                usuario.getRoles().stream().anyMatch(Roles.getFuncionarios()::contains) &&
+                        !securityService.usuarioLogadoContemRole(Roles.ADMIN)
+        ) {
+            throw new AccessDeniedException("Apenas usuários Administradores autenticados podem cadastrar novos funcionários");
         }
     }
 
@@ -41,7 +44,7 @@ public class UsuarioValidator {
             throw new RegraDeNegocioException("Usuário já foi desativado");
         }
         if (pedidoRepository.existsByUsuarioAndStatusIn(usuario, List.of(StatusPedido.PAGO, StatusPedido.ENVIADO, StatusPedido.PENDENTE))) {
-            throw new RegraDeNegocioException("Não é permitido desativar um usuário que contém pedidos enviados, pagos ou pendentes, deve-se primeiro ter todos os pedidos finalizados como recebidos ou cancelados");
+            throw new RegraDeNegocioException("Não é permitido desativar um usuário que contém pedidos enviados, pagos ou pendentes, deve-se primeiro ter todos os pedidos finalizados como entregues ou cancelados");
         }
     }
 }
