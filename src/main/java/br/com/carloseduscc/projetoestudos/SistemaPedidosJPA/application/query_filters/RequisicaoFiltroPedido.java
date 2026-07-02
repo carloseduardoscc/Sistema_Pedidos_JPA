@@ -13,6 +13,7 @@ public class RequisicaoFiltroPedido {
 
     LocalDateTime dateMin;
     LocalDateTime dateMax;
+    String usuarioEmail;
     Integer page = 0;
     Integer size = 10;
 //
@@ -23,8 +24,9 @@ public class RequisicaoFiltroPedido {
 
     public Specification<Pedido> toSpecification(){
         Specification<Pedido> spec = initialize();
-        if(dateMin != null) spec = isAfter(dateMin);
-        if(dateMax != null) spec = isBefore(dateMax);
+        if(dateMin != null) spec = spec.and(isAfter(dateMin));
+        if(dateMax != null) spec = spec.and(isBefore(dateMax));
+        if(usuarioEmail != null) spec = spec.and(usuarioEmailIsLike(usuarioEmail));
         return spec;
     }
 }

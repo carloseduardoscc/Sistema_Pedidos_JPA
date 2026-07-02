@@ -1,8 +1,5 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller;
 
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.autorizacao.SomenteAdmin;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.autorizacao.SomenteClienteDonoDoRecurso;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.autorizacao.SomenteClienteDonoDoRecursoOuAdmin;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common.GenericController;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioService;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AtualizarDadosUsuarioCommand;
@@ -11,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,7 +22,7 @@ public class UsuarioController implements GenericController {
     private final UsuarioService service;
 
     @PostMapping("{usuarioId}/pedidos")
-    @SomenteClienteDonoDoRecursoOuAdmin
+    @PreAuthorize("#usuarioId == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<Object> abrirNovoPedido(@PathVariable UUID usuarioId) {
         var response = service.abrirNovoPedido(usuarioId);
         URI uri = gerarHeaderLocation(response.id().toString());
@@ -33,14 +31,15 @@ public class UsuarioController implements GenericController {
 
 
     @GetMapping("{usuarioId}")
-    @SomenteClienteDonoDoRecursoOuAdmin
+    @PreAuthorize("#usuarioId == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarDetalhes(@PathVariable UUID usuarioId) {
         UsuarioDTO usuarioDTO = service.buscarDetalhes(usuarioId);
         return ResponseEntity.ok(usuarioDTO);
     }
 
     @GetMapping
-    @SomenteAdmin
+    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<Object> pesquisarListagem(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "email", required = false) String email,
@@ -52,7 +51,7 @@ public class UsuarioController implements GenericController {
     }
 
     @PatchMapping("{usuarioId}")
-    @SomenteClienteDonoDoRecursoOuAdmin
+    @PreAuthorize("#usuarioId == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<Object> atualizarDados(
             @RequestBody @Valid AtualizarDadosUsuarioCommand cmd,
             @PathVariable UUID usuarioId
@@ -62,7 +61,7 @@ public class UsuarioController implements GenericController {
     }
 
     @DeleteMapping("{usuarioId}")
-    @SomenteClienteDonoDoRecurso
+    @PreAuthorize("#usuarioId == authentication.principal.id")
     public ResponseEntity<Object> desativarUsuario(@PathVariable UUID usuarioId) {
         service.desativarUsuario(usuarioId);
         return ResponseEntity.noContent().build();

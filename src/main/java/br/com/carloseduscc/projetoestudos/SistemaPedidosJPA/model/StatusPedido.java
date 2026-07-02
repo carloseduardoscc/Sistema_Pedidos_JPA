@@ -8,8 +8,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public enum StatusPedido {
     CANCELADO(List.of()),
-    RECEBIDO(List.of()),
-    ENVIADO(List.of(RECEBIDO)),
+    ENTREGUE(List.of()),
+    ENVIADO(List.of(ENTREGUE)),
     PAGO(List.of(ENVIADO, CANCELADO)),
     PENDENTE(List.of(PAGO, CANCELADO));
 
