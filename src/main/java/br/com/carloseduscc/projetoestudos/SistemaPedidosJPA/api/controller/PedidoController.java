@@ -1,7 +1,5 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller;
 
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.autorizacao.SomenteAdmin;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.autorizacao.SomenteDonoPedidoOuAdmin;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common.GenericController;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.PedidoService;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.AdicionarItemPedidoCommand;
@@ -12,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,7 +24,7 @@ public class PedidoController implements GenericController {
     public final PedidoService service;
 
     @PostMapping("{idPedido}/itens-pedido")
-    @SomenteDonoPedidoOuAdmin
+    @PreAuthorize("@autorizador.isUsuarioDonoPedido(#idPedido, authentication.principal.id) or hasRole('ADMIN')")
     public ResponseEntity<Object> adicionarItemAoPedido(@PathVariable @Valid UUID idPedido, @RequestBody @Valid AdicionarItemPedidoCommand itemCmd){
         var dtoResponse = service.adicionarItem(idPedido, itemCmd);
         URI uri = gerarHeaderLocation(dtoResponse.idItem().toString());
@@ -33,23 +32,44 @@ public class PedidoController implements GenericController {
     }
 
     @GetMapping("{idPedido}")
-    @SomenteDonoPedidoOuAdmin
+    @PreAuthorize("@autorizador.isUsuarioDonoPedido(#idPedido, authentication.principal.id) or hasAnyRole('ADMIN', 'LOJISTA', 'ENTREGADOR')")
     public ResponseEntity<Object> buscarDetalhes(@PathVariable UUID idPedido){
         var responseDTO = service.obterDetalhes(idPedido);
         return ResponseEntity.ok(responseDTO);
     }
 
     @GetMapping()
-    @SomenteAdmin
+    @PreAuthorize("hasAnyRole('ADMIN', 'LOJISTA', 'ENTREGADOR')")
     public ResponseEntity<Object> pesquisarListagem(@ModelAttribute RequisicaoFiltroPedido parametros){
         Page<PedidoDTO> page = service.pesquisarListagem(parametros);
         return ResponseEntity.ok(page);
     }
 
-    @PatchMapping("{idPedido}")
-    @SomenteDonoPedidoOuAdmin
-    public ResponseEntity<Object> alterarStatus(@PathVariable UUID idPedido, @RequestBody AlterarStatusCommand status){
-        service.mudarStatus(idPedido, status);
+    @PatchMapping("{idPedido}/pagar")
+    @PreAuthorize("@autorizador.isUsuarioDonoPedido(#idPedido, authentication.principal.id)")
+    public ResponseEntity<Object> tornarPago(@PathVariable UUID idPedido, @RequestBody AlterarStatusCommand status){
+        service.tornarPago(idPedido);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("{idPedido}/enviar")
+    @PreAuthorize("hasAnyRole('LOJISTA', 'ADMIN')")
+    public ResponseEntity<Object> tornarEnviado(@PathVariable UUID idPedido, @RequestBody AlterarStatusCommand status){
+        service.tornarEnviado(idPedido);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("{idPedido}/tornar-entregue")
+    @PreAuthorize("hasAnyRole('ENTREGADOR', 'ADMIN')")
+    public ResponseEntity<Object> tornarEntregue(@PathVariable UUID idPedido, @RequestBody AlterarStatusCommand status){
+        service.tornarEntregue(idPedido);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("{idPedido}/cancelar")
+    @PreAuthorize("@autorizador.isUsuarioDonoPedido(#idPedido, authentication.principal.id) or hasRole('ADMIN')")
+    public ResponseEntity<Object> tornarCancelado(@PathVariable UUID idPedido, @RequestBody AlterarStatusCommand status){
+        service.tornarCancelado(idPedido);
         return ResponseEntity.noContent().build();
     }
 }
