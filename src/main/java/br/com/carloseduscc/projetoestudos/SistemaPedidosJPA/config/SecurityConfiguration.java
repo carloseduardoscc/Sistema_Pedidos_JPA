@@ -2,6 +2,7 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.config;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioService;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.CustomUserDetailsService;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.LoginSocialSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,7 +28,7 @@ import java.util.List;
 public class SecurityConfiguration {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler loginSocialSuccessHandler) {
         return http
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.disable())
@@ -53,6 +54,7 @@ public class SecurityConfiguration {
                 })
                 .oauth2Login(oauth -> {
                     oauth.loginPage("/login");
+                    oauth.successHandler(loginSocialSuccessHandler);
                 })
                 .build();
     }
