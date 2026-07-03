@@ -15,12 +15,14 @@ public class SecurityService {
 
     private final UsuarioRepository repository;
 
-    public Usuario obterUsuarioLogado(){
-        UserDetails userDetails = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return repository.findByEmail(userDetails.getUsername()).get();
+    public Usuario obterUsuarioLogado() {
+        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof Usuario usuario) {
+            return usuario;
+        }
+        return null;
     }
 
-    public boolean usuarioLogadoContemRole(Roles role){
-        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_"+role.toString()));
+    public boolean usuarioLogadoContemRole(Roles role) {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority(role.toString()));
     }
 }
