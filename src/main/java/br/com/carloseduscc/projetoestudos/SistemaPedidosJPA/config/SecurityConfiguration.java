@@ -2,6 +2,7 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.config;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioService;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.CustomUserDetailsService;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.LoginSocialSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +28,7 @@ import java.util.List;
 public class SecurityConfiguration {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http){
+    SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler loginSocialSuccessHandler) {
         return http
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.disable())
@@ -47,18 +49,23 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/h2-console/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     auth.anyRequest().authenticated();
+                })
+                .oauth2Login(oauth -> {
+                    oauth.loginPage("/login");
+                    oauth.successHandler(loginSocialSuccessHandler);
                 })
                 .build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(UsuarioService usuarioService, PasswordEncoder encoder){
+//    @Bean
+    public UserDetailsService userDetailsService(UsuarioService usuarioService, PasswordEncoder encoder) {
 //        UserDetails user1 = User.builder()
 //                .username("admin@email.com")
 //                .password(encoder.encode("321"))
@@ -74,5 +81,10 @@ public class SecurityConfiguration {
 //        return new InMemoryUserDetailsManager(user1, user2);
 
         return new CustomUserDetailsService(usuarioService);
+    }
+
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return new GrantedAuthorityDefaults("");
     }
 }
