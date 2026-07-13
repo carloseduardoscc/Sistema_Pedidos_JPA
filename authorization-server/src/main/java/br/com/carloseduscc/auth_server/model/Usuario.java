@@ -1,0 +1,60 @@
+package br.com.carloseduscc.auth_server.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+@Data
+@ToString(exclude = "pedidos")
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "identidade_tb", schema = "auth")
+public class Usuario {
+
+    {
+        this.ativo = true;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(name = "email", length = 254, unique = true)
+    private String email;
+
+    @Column
+    private String senha;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "roles")
+    private Set<Roles> roles;
+
+    // Estado
+    @Column(name = "ativo")
+    Boolean ativo;
+
+    // Auditoria
+    @CreatedDate
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @LastModifiedDate
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+
+    // Controle de concorrência otimista
+    @Version
+    private Long version;
+
+}

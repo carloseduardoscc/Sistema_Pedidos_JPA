@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: authorization_server_sistema_pedidos
+  profiles:
+    active: ${APP_PROFILE:test}
+  jpa:
+    open-in-view: false
+server:
+  port: 9000
