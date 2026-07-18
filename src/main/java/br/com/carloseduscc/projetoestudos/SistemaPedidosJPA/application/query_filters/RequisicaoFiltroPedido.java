@@ -1,6 +1,7 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_filters;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -11,10 +12,15 @@ import static br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.reposit
 @Data
 public class RequisicaoFiltroPedido {
 
+    @Schema(example = "2026-07-15T22:08:33.588Z")
     LocalDateTime dateMin;
+    @Schema(example = "2026-07-18T22:08:33.588Z")
     LocalDateTime dateMax;
+    @Schema(example = "carlos.eduardo@email.com")
     String usuarioEmail;
+    @Schema(example = "0")
     Integer page = 0;
+    @Schema(example = "10")
     Integer size = 10;
 //
 //    {

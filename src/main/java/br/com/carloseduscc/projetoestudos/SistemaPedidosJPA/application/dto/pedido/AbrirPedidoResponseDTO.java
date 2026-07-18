@@ -1,13 +1,13 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Schema(name = "Resposta de abertura de pedido")
 public record AbrirPedidoResponseDTO(
-        UUID id,
-        LocalDateTime dataPedido,
-        StatusPedido status
+        UUID id
 ) {
 }
