@@ -24,6 +24,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("usuarios")
 @RequiredArgsConstructor
+@Tag(name = "Usuários")
 public class UsuarioController implements GenericController {
 
     private final UsuarioService service;
@@ -46,7 +47,15 @@ public class UsuarioController implements GenericController {
 
     @PostMapping("{usuarioId}/pedidos")
     @PreAuthorize("#usuarioId == authentication.principal.id or hasRole('ADMIN')")
-    public ResponseEntity<Object> abrirNovoPedido(@PathVariable UUID usuarioId) {
+    @Operation(
+            summary = "Abrir novo pedido", description = "Abre um novo pedido para o usuário"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "203", description = "Pedido criado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não foi encontrado", content = @Content()),
+            @ApiResponse(responseCode = "400", description = "Violação de regra de negócio: Usuário já possúi pedido pendente", content = @Content())
+    })
+    public ResponseEntity<AbrirPedidoResponseDTO> abrirNovoPedido(@PathVariable UUID usuarioId) {
         var response = service.abrirNovoPedido(usuarioId);
         URI uri = gerarHeaderLocation(response.id().toString());
         return ResponseEntity.created(uri).body(response);
@@ -55,15 +64,27 @@ public class UsuarioController implements GenericController {
 
     @GetMapping("{usuarioId}")
     @PreAuthorize("#usuarioId == authentication.principal.id or hasRole('ADMIN')")
-    public ResponseEntity<Object> buscarDetalhes(@PathVariable UUID usuarioId) {
+    @Operation(
+            summary = "Buscar detalhes", description = "Busca os detalhes de um usuário pelo seu Id"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Detalhes encontrados com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content())
+    })
+    public ResponseEntity<UsuarioDTO> buscarDetalhes(@PathVariable UUID usuarioId) {
         UsuarioDTO usuarioDTO = service.buscarDetalhes(usuarioId);
         return ResponseEntity.ok(usuarioDTO);
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-
-    public ResponseEntity<Object> pesquisarListagem(
+    @Operation(
+            summary = "Pesquisar", description = "Realiza uma pesquisa baseada em parâmetros"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pesquisa realizada com sucesso")
+    })
+    public ResponseEntity<Page<UsuarioDTO>> pesquisarListagem(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "email", required = false) String email,
             @RequestParam(value = "page", defaultValue = "0") Integer numeroPagina,
@@ -75,6 +96,15 @@ public class UsuarioController implements GenericController {
 
     @PatchMapping("{usuarioId}")
     @PreAuthorize("#usuarioId == authentication.principal.id or hasRole('ADMIN')")
+    @Operation(
+            summary = "Atualizar dados", description = "Atualiza os dados do usuário"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Dados atualizados com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content()),
+            @ApiResponse(responseCode = "409", description = "E-mail já existe", content = @Content()),
+            @ApiResponse(responseCode = "422", description = "Erro de validação", content = @Content())
+    })
     public ResponseEntity<Object> atualizarDados(
             @RequestBody @Valid AtualizarDadosUsuarioCommand cmd,
             @PathVariable UUID usuarioId
@@ -85,6 +115,14 @@ public class UsuarioController implements GenericController {
 
     @DeleteMapping("{usuarioId}")
     @PreAuthorize("#usuarioId == authentication.principal.id")
+    @Operation(
+            summary = "Desativar usuário", description = "Desativação de conta realizada pelo usuário"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "203", description = "Usuário desativado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Violação de regra de negócio: Usuário ainda contém pedidos enviados, pagos ou pendentes", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content()),
+    })
     public ResponseEntity<Object> desativarUsuario(@PathVariable UUID usuarioId) {
         service.desativarUsuario(usuarioId);
         return ResponseEntity.noContent().build();
