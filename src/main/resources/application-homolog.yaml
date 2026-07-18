@@ -15,3 +15,6 @@ logging:
   level:
     ACCESS_LOGGER: DEBUG
 #    org.springframework.security: DEBUG
+
+springdoc:
+  override-with-generic-response: false
