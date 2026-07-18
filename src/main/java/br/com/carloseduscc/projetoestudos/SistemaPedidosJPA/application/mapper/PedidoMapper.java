@@ -17,6 +17,5 @@ public interface PedidoMapper {
     PedidoDTO toDTO(Pedido pedido);
 
     // TO RESPONSES
-    @Mapping(target = "dataPedido", source = "dataHoraPedido")
     AbrirPedidoResponseDTO toAbrirPedidoResponseDto(Pedido pedido);
 }
