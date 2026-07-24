@@ -7,7 +7,6 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usua
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.PedidoMapper;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.UsuarioMapper;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.ports.DomainEventPublisher;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.validator.UsuarioValidator;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
@@ -41,7 +40,6 @@ public class UsuarioService {
     final private UsuarioMapper mapper;
     final private PedidoMapper pedidoMapper;
     final private UsuarioValidator validator;
-    final private DomainEventPublisher eventPublisher;
     final private PasswordEncoder encoder;
 
     @Transactional
@@ -50,7 +48,6 @@ public class UsuarioService {
         usuario.setSenha(encoder.encode(usuario.getSenha()));
         validator.validarCadastro(usuario);
         Usuario usuarioSalvo = repository.save(usuario);
-        eventPublisher.publish(mapper.toUsuarioCadastradoEvent(usuario));
         return mapper.toDTO(usuarioSalvo);
     }
 
@@ -61,7 +58,6 @@ public class UsuarioService {
         usuario.setSenha(encoder.encode(usuario.getSenha()));
         validator.validarCadastro(usuario);
         Usuario usuarioSalvo = repository.save(usuario);
-        eventPublisher.publish(mapper.toUsuarioCadastradoEvent(usuario));
         return usuarioSalvo;
     }
 
@@ -109,8 +105,6 @@ public class UsuarioService {
         Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
         validator.validarDesativacao(usuario);
         usuario.setAtivo(false);
-
-        eventPublisher.publish(mapper.toUsuarioDesativadoEvent(usuario));
     }
 
     public Optional<Usuario> obterPorLogin(String login) {

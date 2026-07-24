@@ -7,14 +7,11 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedi
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.ItemPedidoMapper;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.PedidoMapper;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.ports.DomainEventPublisher;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_filters.RequisicaoFiltroPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.*;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.PedidoAbertoEvent;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.events.PedidoTeveStatusModificadoEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +33,6 @@ public class PedidoService {
     private final ItemPedidoRepository itemPedidoRepository;
     private final ItemPedidoMapper itemPedidoMapper;
     private final PedidoMapper mapper;
-    final private DomainEventPublisher eventPublisher;
 
     @Transactional
     public Pedido abrirPedido(UUID idUsuario) {
@@ -46,8 +42,6 @@ public class PedidoService {
         pedido.setStatus(StatusPedido.PENDENTE);
 
         pedidoRepository.save(pedido);
-
-        eventPublisher.publish(new PedidoAbertoEvent(pedido));
 
         return pedido;
     }
@@ -137,8 +131,6 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.buscarPedidoComUsuarioJoinFetch(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
         StatusPedido antigoStatus = pedido.getStatus();
         pedido.setStatus(statusPedido);
-
-        eventPublisher.publish(new PedidoTeveStatusModificadoEvent(antigoStatus, pedido));
     }
 
     @Transactional
