@@ -6,8 +6,10 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exceptio
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.OperacaoNaoPermitidaException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.RegistroDuplicadoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -18,78 +20,94 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    ErroResposta handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        ArrayList<CampoErro> errosDeValidacao = e.getFieldErrors().stream()
-                .map(fe -> new CampoErro(fe.getField(), fe.getDefaultMessage()))
-                .collect(Collectors.toCollection(ArrayList::new));
-
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErroResposta handleAuthenticationException(AuthenticationException e) {
+        log.info("Erro por falta de autenticação: {}", e.getMessage());
         return new ErroResposta(
-                HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                "Erro de validação",
-                errosDeValidacao
-        );
-    }
-
-    @ExceptionHandler(RegraDeNegocioException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    ErroResposta handleRegraDeNegocioException(RegraDeNegocioException e){
-        return new ErroResposta(
-                HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                e.getMessage(),
-                List.of()
-        );
-    }
-
-    @ExceptionHandler(OperacaoNaoPermitidaException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErroResposta handleOperacaoNaoPermitidaException(OperacaoNaoPermitidaException e){
-        return new ErroResposta(
-                HttpStatus.BAD_REQUEST.value(),
-                e.getMessage(),
-                List.of()
-        );
-    }
-
-    @ExceptionHandler(RegistroDuplicadoException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    ErroResposta handleRegistroDuplicadoException(RegistroDuplicadoException e){
-        return new ErroResposta(
-                HttpStatus.CONFLICT.value(),
-                e.getMessage(),
-                List.of()
-        );
-    }
-
-    @ExceptionHandler(NaoEncontradoException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    ErroResposta handleNaoEncontradoException(NaoEncontradoException e){
-        return new ErroResposta(
-                HttpStatus.NOT_FOUND.value(),
-                e.getMessage(),
-                List.of()
+                HttpStatus.UNAUTHORIZED.value(),
+                "Não autenticado / autenticação falhou",
+                List.of(new CampoErro("Causa", e.getMessage()))
         );
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    ErroResposta handleAccessDeniedException(AccessDeniedException e){
+    public ErroResposta handleAccessDeniedException(AccessDeniedException e) {
+        log.info("Erro de acesso negado / permissões insuficientes: {}", e.getMessage());
         return new ErroResposta(
                 HttpStatus.FORBIDDEN.value(),
                 "Acesso negado",
+                List.of(new CampoErro("Causa", e.getMessage()))
+        );
+    }
+
+    @ExceptionHandler(NaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    ErroResposta handleNaoEncontradoException(NaoEncontradoException e) {
+        log.info("Erro de recurso não encontrado: {}", e.getMessage());
+        return new ErroResposta(
+                HttpStatus.NOT_FOUND.value(),
+                "Operação não permitida",
                 List.of()
+        );
+    }
+
+    @ExceptionHandler(OperacaoNaoPermitidaException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    ErroResposta handleOperacaoNaoPermitidaException(OperacaoNaoPermitidaException ex) {
+        log.info("Erro de operação não permitida: {}",ex.getMessage());
+        return new ErroResposta(
+                HttpStatus.CONFLICT.value(),
+                "Operação não permitida",
+                List.of(new CampoErro("Causa", ex.getMessage()))
+        );
+    }
+
+    @ExceptionHandler(RegraDeNegocioException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    ErroResposta handleRegraDeNegocioException(RegraDeNegocioException ex) {
+        log.info("Erro de violação de política interna: {}",ex.getMessage());
+        return new ErroResposta(
+                HttpStatus.CONFLICT.value(),
+                "Violação de política interna",
+                List.of(new CampoErro("Causa", ex.getMessage()))
+        );
+    }
+
+    @ExceptionHandler(RegistroDuplicadoException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    ErroResposta handleRegistroDuplicadoException(RegistroDuplicadoException ex) {
+        log.info("Erro de registro duplicado: {}", ex.getMessage());
+        return new ErroResposta(
+                HttpStatus.CONFLICT.value(),
+                "Registro duplicado",
+                List.of(new CampoErro("Causa", ex.getMessage()))
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    ErroResposta handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.info("Erro de validação: {}",e.getMessage());
+        return new ErroResposta(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "Erro de validação",
+                e.getFieldErrors().stream()
+                        .map(fe -> new CampoErro(fe.getField(), fe.getDefaultMessage()))
+                        .collect(Collectors.toCollection(ArrayList::new))
         );
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    ErroResposta handleExcecaoNaoTratada(RuntimeException e){
+    ErroResposta handleRuntimeException(RuntimeException e) {
+        log.error("Erro interno inesperado", e);
         return new ErroResposta(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Ocorreu um erro inesperado. Entre em contato com a administração.",
+                "Ocorreu um erro inesperado, entre em contato com a administração.",
                 List.of(new CampoErro("Mensagem", e.getMessage()))
         );
     }

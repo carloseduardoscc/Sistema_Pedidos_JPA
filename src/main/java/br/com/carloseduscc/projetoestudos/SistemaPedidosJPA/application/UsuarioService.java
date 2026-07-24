@@ -17,8 +17,6 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,8 +30,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
-
-    private static final Logger logger = LoggerFactory.getLogger("ACCESS_LOGGER");
 
     final private UsuarioRepository repository;
     final private PedidoRepository pedidoRepository;
