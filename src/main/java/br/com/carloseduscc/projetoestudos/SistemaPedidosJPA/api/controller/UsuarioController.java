@@ -49,7 +49,7 @@ public class UsuarioController implements GenericController {
     }
 
     @PostMapping("{usuarioId}/pedidos")
-    @PreAuthorize("#usuarioId == authentication.principal.id or hasRole('ADMIN')")
+    @PreAuthorize("@autorizador.podeAbrirNovoPedido(authentication, #usuarioId)")
     @Operation(
             summary = "Abrir novo pedido", description = "Abre um novo pedido para o usuário"
     )
