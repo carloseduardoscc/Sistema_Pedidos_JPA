@@ -47,16 +47,6 @@ public class UsuarioService {
         return mapper.toDTO(usuarioSalvo);
     }
 
-    //todo temporário
-    @Transactional
-    public Usuario cadastrarUsuarioTemp(CadastrarUsuarioCommand usuarioCmd) {
-        Usuario usuario = mapper.fromCommand(usuarioCmd);
-        usuario.setSenha(encoder.encode(usuario.getSenha()));
-        validator.validarCadastro(usuario);
-        Usuario usuarioSalvo = repository.save(usuario);
-        return usuarioSalvo;
-    }
-
     public UsuarioDTO buscarDetalhes(UUID id) {
         Optional<Usuario> usuarioOpt = repository.findById(id);
         Usuario usuario = usuarioOpt.orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));

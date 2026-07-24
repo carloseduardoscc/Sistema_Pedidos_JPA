@@ -1,8 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.UsuarioService;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.comand.CadastrarUsuarioCommand;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usuario.UsuarioDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Roles;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import jakarta.servlet.ServletException;
@@ -47,14 +45,13 @@ public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSu
     }
 
     private Usuario criarEPersistirNovoUsuario(OAuth2User oAuth2User) {
-        String email = oAuth2User.getAttribute("email");
-
-        return usuarioService.cadastrarUsuarioTemp(new CadastrarUsuarioCommand(
-                gerarNomeApartirDeEmail(email),
-                email,
-                SENHA_PADRAO_NOVO_USUARIO,
-                Set.of(Roles.getRolePadrao())
-        ));
+        String oAuth2UserEmail = oAuth2User.getAttribute("email");
+        Usuario usuarioViaOauth2 = new Usuario();
+        usuarioViaOauth2.setNome(gerarNomeApartirDeEmail(oAuth2UserEmail));
+        usuarioViaOauth2.setEmail(oAuth2UserEmail);
+        usuarioViaOauth2.setSenha(SENHA_PADRAO_NOVO_USUARIO);
+        usuarioViaOauth2.setRoles(Set.of(Roles.getRolePadrao()));
+        return usuarioViaOauth2;
     }
 
     private String gerarNomeApartirDeEmail(String email) {
