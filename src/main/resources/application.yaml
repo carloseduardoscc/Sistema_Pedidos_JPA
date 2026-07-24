@@ -1,7 +1,32 @@
+# Application
 spring:
   application:
-    name: SistemaPedidos
+    name: sistema_pedidos_api
+  output:
+    ansi:
+      enabled:
+        ALWAYS
   profiles:
     active: ${APP_PROFILE:test}
+
+# Database
   jpa:
     open-in-view: false
+
+
+  # Security
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+
+# Logging
+logging:
+  level:
+    root: info
+  file:
+    name: app.log
+  pattern.console: '%clr(%d{dd-MM-yyyy HH:mm:ss}){faint} %clr(%5p) %clr([%t]){faint} [%clr(%X{requestId}){yellow} %clr(%X{user}){red} %clr(%X{roles}){blue}] %clr(%-40.40logger{36}){cyan} %clr(:){yellow} %m%n'
