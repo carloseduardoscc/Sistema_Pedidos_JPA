@@ -22,11 +22,6 @@ public class RequisicaoFiltroPedido {
     Integer page = 0;
     @Schema(example = "10")
     Integer size = 10;
-//
-//    {
-//        if (page == null) page = 0;
-//        if (size == null) size = 10;
-//    }
 
     public Specification<Pedido> toSpecification(){
         Specification<Pedido> spec = initialize();

@@ -1,3 +1,4 @@
+# Database
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/sistema_pedidos_jpa
@@ -11,10 +12,15 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+# Logging
 logging:
   level:
-    ACCESS_LOGGER: DEBUG
-#    org.springframework.security: DEBUG
+    br:
+      com:
+        carloseduscc:
+          projetoestudos: debug
 
+# Doc
 springdoc:
   override-with-generic-response: false

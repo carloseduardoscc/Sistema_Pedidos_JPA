@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +27,7 @@ import java.util.UUID;
 @RequestMapping("pedidos")
 @RequiredArgsConstructor
 @Tag(name = "Pedidos")
+@Slf4j
 public class PedidoController implements GenericController {
 
     public final PedidoService service;
@@ -41,7 +43,8 @@ public class PedidoController implements GenericController {
             @ApiResponse(responseCode = "422", description = "Erro de validação", content = @Content()),
             @ApiResponse(responseCode = "404", description = "Pedido não encontrado", content = @Content())
     })
-    public ResponseEntity<ItemAdicionadoResponseDTO> adicionarItemAoPedido(@PathVariable @Valid UUID idPedido, @RequestBody @Valid AdicionarItemPedidoCommand itemCmd){
+    public ResponseEntity<ItemAdicionadoResponseDTO> adicionarItemAoPedido(@PathVariable @Valid UUID idPedido, @RequestBody @Valid AdicionarItemPedidoCommand itemCmd) {
+        log.info("Adicionando item {} ao pedido de ID: {}", itemCmd.nomeProduto(), idPedido);
         var dtoResponse = service.adicionarItem(idPedido, itemCmd);
         URI uri = gerarHeaderLocation(dtoResponse.idItem().toString());
         return ResponseEntity.created(uri).body(dtoResponse);
@@ -56,7 +59,8 @@ public class PedidoController implements GenericController {
             @ApiResponse(responseCode = "200", description = "Pedido encontrado com sucesso"),
             @ApiResponse(responseCode = "404", description = "O pedido não foi encontrado", content = @Content())
     })
-    public ResponseEntity<PedidoDetalhadoDTO> buscarDetalhes(@PathVariable UUID idPedido){
+    public ResponseEntity<PedidoDetalhadoDTO> buscarDetalhes(@PathVariable UUID idPedido) {
+        log.info("Buscando detalhes do pedido de ID: {}", idPedido);
         var responseDTO = service.obterDetalhes(idPedido);
         return ResponseEntity.ok(responseDTO);
     }
@@ -69,7 +73,8 @@ public class PedidoController implements GenericController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Pesquisa realizada com sucesso")
     })
-    public ResponseEntity<Page<PedidoDTO>> pesquisarListagem(@ModelAttribute RequisicaoFiltroPedido parametros){
+    public ResponseEntity<Page<PedidoDTO>> pesquisarListagem(@ModelAttribute RequisicaoFiltroPedido parametros) {
+        log.info("Pesquisando pedidos com parâmetros e paginação: {}", parametros.toString());
         Page<PedidoDTO> page = service.pesquisarListagem(parametros);
         return ResponseEntity.ok(page);
     }
@@ -84,13 +89,15 @@ public class PedidoController implements GenericController {
             @ApiResponse(responseCode = "404", description = "O pedido não foi encontrado", content = @Content()),
             @ApiResponse(responseCode = "400", description = "Violação de regra de negócio: Apenas pedidos pendentes podem ser pagos pelo CLIENTE dono do pedido", content = @Content())
     })
-    public ResponseEntity<Void> tornarPago(@PathVariable UUID idPedido){
+    public ResponseEntity<Void> tornarPago(@PathVariable UUID idPedido) {
+        log.info("Tornando pago pedido com ID: {}", idPedido);
         service.tornarPago(idPedido);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("{idPedido}/enviar")
-    @PreAuthorize("hasAnyRole('LOJISTA', 'ADMIN')")    @Operation(
+    @PreAuthorize("hasAnyRole('LOJISTA', 'ADMIN')")
+    @Operation(
             summary = "Tornar enviado", description = "Realiza o processo de envio do pedido"
     )
     @ApiResponses({
@@ -98,7 +105,8 @@ public class PedidoController implements GenericController {
             @ApiResponse(responseCode = "404", description = "O pedido não foi encontrado", content = @Content()),
             @ApiResponse(responseCode = "400", description = "Violação de regra de negócio: Apenas pedidos pagos podem ser enviados por um LOJISTA ou ADMIN", content = @Content())
     })
-    public ResponseEntity<Void> tornarEnviado(@PathVariable UUID idPedido){
+    public ResponseEntity<Void> tornarEnviado(@PathVariable UUID idPedido) {
+        log.info("Tornando enviado pedido com ID: {}", idPedido);
         service.tornarEnviado(idPedido);
         return ResponseEntity.noContent().build();
     }
@@ -113,7 +121,8 @@ public class PedidoController implements GenericController {
             @ApiResponse(responseCode = "404", description = "O pedido não foi encontrado", content = @Content()),
             @ApiResponse(responseCode = "400", description = "Violação de regra de negócio: Apenas pedidos enviados podem ser entregues pelo seu ENTREGADOR ou ADMIN", content = @Content())
     })
-    public ResponseEntity<Void> tornarEntregue(@PathVariable UUID idPedido){
+    public ResponseEntity<Void> tornarEntregue(@PathVariable UUID idPedido) {
+        log.info("Tornando entregue pedido com ID: {}", idPedido);
         service.tornarEntregue(idPedido);
         return ResponseEntity.noContent().build();
     }
@@ -128,7 +137,8 @@ public class PedidoController implements GenericController {
             @ApiResponse(responseCode = "404", description = "O pedido não foi encontrado", content = @Content()),
             @ApiResponse(responseCode = "400", description = "Violação de regra de negócio: Apenas pedidos pagos ou pendentes podem ser cancelados pelo seu CLIENTE ou seu ADMIN", content = @Content())
     })
-    public ResponseEntity<Void> tornarCancelado(@PathVariable UUID idPedido){
+    public ResponseEntity<Void> tornarCancelado(@PathVariable UUID idPedido) {
+        log.info("Cancelando pedido com ID: {}", idPedido);
         service.tornarCancelado(idPedido);
         return ResponseEntity.noContent().build();
     }

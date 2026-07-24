@@ -7,7 +7,6 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.usua
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.PedidoMapper;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.UsuarioMapper;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.ports.DomainEventPublisher;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.validator.UsuarioValidator;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
@@ -18,8 +17,6 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,14 +31,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UsuarioService {
 
-    private static final Logger logger = LoggerFactory.getLogger("ACCESS_LOGGER");
-
     final private UsuarioRepository repository;
     final private PedidoRepository pedidoRepository;
     final private UsuarioMapper mapper;
     final private PedidoMapper pedidoMapper;
     final private UsuarioValidator validator;
-    final private DomainEventPublisher eventPublisher;
     final private PasswordEncoder encoder;
 
     @Transactional
@@ -50,7 +44,6 @@ public class UsuarioService {
         usuario.setSenha(encoder.encode(usuario.getSenha()));
         validator.validarCadastro(usuario);
         Usuario usuarioSalvo = repository.save(usuario);
-        eventPublisher.publish(mapper.toUsuarioCadastradoEvent(usuario));
         return mapper.toDTO(usuarioSalvo);
     }
 
@@ -61,7 +54,6 @@ public class UsuarioService {
         usuario.setSenha(encoder.encode(usuario.getSenha()));
         validator.validarCadastro(usuario);
         Usuario usuarioSalvo = repository.save(usuario);
-        eventPublisher.publish(mapper.toUsuarioCadastradoEvent(usuario));
         return usuarioSalvo;
     }
 
@@ -109,8 +101,6 @@ public class UsuarioService {
         Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
         validator.validarDesativacao(usuario);
         usuario.setAtivo(false);
-
-        eventPublisher.publish(mapper.toUsuarioDesativadoEvent(usuario));
     }
 
     public Optional<Usuario> obterPorLogin(String login) {
