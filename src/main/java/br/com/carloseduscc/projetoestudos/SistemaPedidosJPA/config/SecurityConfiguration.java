@@ -5,8 +5,6 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.erro
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.LoginSocialSuccessHandler;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.MdcFilter;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.RequestLoggingFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
-import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,6 +30,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.session.DisableEncodeUrlFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;

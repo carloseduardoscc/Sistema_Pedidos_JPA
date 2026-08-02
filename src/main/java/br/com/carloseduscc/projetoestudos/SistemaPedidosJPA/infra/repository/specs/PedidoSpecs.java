@@ -1,7 +1,6 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.specs;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
-import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 

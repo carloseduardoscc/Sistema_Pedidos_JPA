@@ -11,7 +11,10 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_fi
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.*;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

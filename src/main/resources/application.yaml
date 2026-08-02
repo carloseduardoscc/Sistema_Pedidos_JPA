@@ -131,3 +131,36 @@ logging:
           projetoestudos: debug
   file:
     name: app.log
+
+
+
+
+--- # DDL GENERATION PROFILE
+spring:
+  config:
+    activate:
+      on-profile: ddl_generation
+
+  datasource:
+    url: jdbc:h2:mem:ddl
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+      jakarta:
+        persistence:
+          schema-generation:
+            database:
+              action: none
+            scripts:
+              action: create
+              create-target: target/postgres_ddl.sql
+              create-source: metadata
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
