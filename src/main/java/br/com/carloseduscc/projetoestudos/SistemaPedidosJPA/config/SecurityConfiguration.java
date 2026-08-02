@@ -2,8 +2,8 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.config;
 
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.common.GlobalExceptionHandler;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.erro.ErroResposta;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.AuthenticationLoggingFilter;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.LoginSocialSuccessHandler;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.MdcFilter;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.RequestLoggingFilter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,8 +48,8 @@ public class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             LoginSocialSuccessHandler loginSocialSuccessHandler,
-            RequestLoggingFilter requestLoggingFilter,
-            MdcFilter mdcFilter
+            AuthenticationLoggingFilter authenticationLoggingFilter,
+            RequestLoggingFilter requestLoggingFilter
     ) {
         return http
                 .headers(headers -> headers
@@ -82,8 +82,8 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(accessDeniedHandler())
                         .authenticationEntryPoint(authenticationEntryPoint())
                 )
-                .addFilterBefore(requestLoggingFilter, DisableEncodeUrlFilter.class)
-                .addFilterAfter(mdcFilter, AuthorizationFilter.class)
+                .addFilterBefore(authenticationLoggingFilter, DisableEncodeUrlFilter.class)
+                .addFilterAfter(requestLoggingFilter, AuthorizationFilter.class)
                 .build();
     }
 
