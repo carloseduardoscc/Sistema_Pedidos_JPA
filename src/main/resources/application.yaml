@@ -1,4 +1,4 @@
-# Application
+--- # DEFAULT PROFILE
 spring:
   application:
     name: sistema_pedidos_api
@@ -6,15 +6,10 @@ spring:
     ansi:
       enabled:
         ALWAYS
-  profiles:
-    active: ${APP_PROFILE:test}
-
-# Database
+# Datasource
   jpa:
     open-in-view: false
-
-
-  # Security
+# Security
   security:
     oauth2:
       client:
@@ -22,11 +17,150 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-
 # Logging
 logging:
   level:
     root: info
+  pattern.console: '%clr(%d{dd-MM-yyyy HH:mm:ss}){faint} %clr(%5p) %clr([%t]){faint} [%clr(%X{requestId}){yellow} %clr(%X{user}){red} %clr(%X{roles}){blue}] %clr(%-40.40logger{36}){cyan} %clr(:){yellow} %m%n'
+# Swagger
+springdoc:
+  override-with-generic-response: false
+
+
+
+
+--- # TEST PROFILE
+spring:
+  config:
+    activate:
+      on-profile: test
+# Datasource
+  datasource:
+    username: sa
+    url: "jdbc:h2:mem:testdb;INIT=CREATE SCHEMA IF NOT EXISTS order_management"
+    password: ''
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:sql/seed-test.sql
+  jpa:
+    show-sql: true
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      settings:
+        web-allow-others: true
+      enabled: true
+      path: /h2-console
+# Logging
+logging:
+  level:
+    br:
+      com:
+        carloseduscc:
+          projetoestudos: debug
+    org:
+      springframework:
+        security: debug
+        web: debug
+
+
+
+
+--- # HOMOLOG PROFILE
+spring:
+  config:
+    activate:
+      on-profile: homologation
+# Datasource
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+# Logging
+logging:
+  level:
+    br:
+      com:
+        carloseduscc:
+          projetoestudos: debug
+    org:
+      springframework:
+        security: debug
+        web: debug
+  file:
+    name: homolog_app.log
+
+
+
+
+--- # PRODUCTION PROFILE
+spring:
+  config:
+    activate:
+      on-profile: production
+# Datasource
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+# Logging
+logging:
+  level:
+    br:
+      com:
+        carloseduscc:
+          projetoestudos: debug
   file:
     name: app.log
-  pattern.console: '%clr(%d{dd-MM-yyyy HH:mm:ss}){faint} %clr(%5p) %clr([%t]){faint} [%clr(%X{requestId}){yellow} %clr(%X{user}){red} %clr(%X{roles}){blue}] %clr(%-40.40logger{36}){cyan} %clr(:){yellow} %m%n'
+
+
+
+
+--- # DDL GENERATION PROFILE
+spring:
+  config:
+    activate:
+      on-profile: ddl_generation
+
+  datasource:
+    url: jdbc:h2:mem:ddl
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+      jakarta:
+        persistence:
+          schema-generation:
+            database:
+              action: none
+            scripts:
+              action: create
+              create-target: target/postgres_ddl.sql
+              create-source: metadata
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect

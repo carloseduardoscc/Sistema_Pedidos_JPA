@@ -32,6 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
-### App ###
+### Logs ###
 app.log
-app.log.2026-07-23.0.gz
+*app*.log
