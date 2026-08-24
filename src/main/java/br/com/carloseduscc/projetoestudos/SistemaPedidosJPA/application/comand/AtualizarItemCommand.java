@@ -10,16 +10,9 @@ import java.math.BigDecimal;
 
 @Schema(name = "Requisição para atualizar item")
 public record AtualizarItemCommand(
-        @Size(min = 2, message = "Nome do produto deve ter mais que dois caracteres")
-        @Size(max = 100, message = "Nome do produto deve ter menos que 100 caracteres")
-        @Schema(minLength = 2, maxLength = 100, example = "Mouse gamer")
-        String nomeProduto,
         @Min(value = 1, message = "Quantidade de itens não pode ser menor que um")
         @Max(value = 100, message = "Quantidade de itens não pode ser maior que 100")
         @Schema(minLength = 1, maxLength = 100, example = "5")
-        Integer quantidade,
-        @DecimalMin(value = "0.01", message = "Preço unitário não pode ser negativo ou zero")
-        @Schema(minimum = "0.01", maximum = "10_000", example = "76.99")
-        BigDecimal precoUnitario
+        Integer quantidade
 ) {
 }

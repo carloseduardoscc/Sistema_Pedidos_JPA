@@ -9,16 +9,17 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = ProdutoMapper.class)
 public interface ItemPedidoMapper {
     ItemPedido fromCommand(AdicionarItemPedidoCommand pedidoCmd);
+
+    @Mapping(target = "valor", expression = "java( itemPedido.getValorTotal() )")
+    @Mapping(target = "nomeProduto", expression = "java( itemPedido.getProduto().getNome() )")
+    ItemResumoDTO toResumoDTO(ItemPedido itemPedido);
+
+    ItemDetalhadoDTO fromProjectionToDTO(ItemPedidoDetalhadoProjection projection);
 
     @Mapping(source="id", target = "idItem")
     @Mapping(source = "pedido.id", target = "idPedido")
     ItemAdicionadoResponseDTO toPedidoAdicionadoResponseDTO(ItemPedido itemPedido);
-
-    @Mapping(target = "valor", expression = "java( itemPedido.getValorTotal() )")
-    ItemResumoDTO toResumoDTO(ItemPedido itemPedido);
-
-    ItemDetalhadoDTO fromProjectionToDTO(ItemPedidoDetalhadoProjection projection);
 }

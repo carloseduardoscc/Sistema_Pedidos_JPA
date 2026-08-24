@@ -1,16 +1,20 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.api.controller.autorizacao;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.PedidoService;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.NaoEncontradoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.CustomAuthentication;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Roles;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -21,13 +25,16 @@ public class Autorizador {
     private final PedidoRepository pedidoRepository;
     private final ItemPedidoRepository itemPedidoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PedidoService pedidoService;
 
     public boolean isUsuarioDonoItem(UUID itemId, UUID usuarioId) {
-        return itemPedidoRepository.findById(itemId).get().getPedido().getUsuario().getId().equals(usuarioId);
+        Optional<ItemPedido> itemOpt = itemPedidoRepository.findById(itemId);
+        return itemOpt.map(itemPedido -> itemPedido.getPedido().getUsuario().getId().equals(usuarioId)).orElse(false);
     }
 
     public boolean isUsuarioDonoPedido(UUID pedidoId, UUID usuarioId) {
-        return pedidoRepository.findById(pedidoId).get().getUsuario().getId().equals(usuarioId);
+        Optional<Pedido> pedidoOpt = pedidoRepository.findById(pedidoId);
+        return pedidoOpt.map(pedido -> pedido.getUsuario().getId().equals(usuarioId)).orElse(false);
     }
 
     public boolean podeAbrirNovoPedido(Authentication authentication, UUID usuarioAfetadoId) {

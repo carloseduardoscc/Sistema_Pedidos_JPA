@@ -14,15 +14,16 @@ import java.util.UUID;
 public interface ItemPedidoRepository extends JpaRepository<ItemPedido, UUID> {
 
     @Query("""
-    select
+    SELECT
         i.id as itemId,
-        p.id as pedidoId,
-        i.nomeProduto as nomeProduto,
+        ped.id as pedidoId,
+        prod.nome as nomeProduto,
         i.quantidade as quantidade,
-        i.precoUnitario as precoUnitario
-    from ItemPedido i
-    join i.pedido p
-    where i.id = :idItem
+        prod.precoUnitario as precoUnitario
+    FROM ItemPedido i
+    JOIN i.pedido ped
+    JOIN i.produto prod
+    WHERE i.id = :idItem
 """)
     Optional<ItemPedidoDetalhadoProjection> buscarItemPedidoDetalhadoProjection(@Param("idItem") UUID id);
 
@@ -35,14 +36,5 @@ public interface ItemPedidoRepository extends JpaRepository<ItemPedido, UUID> {
 """)
     int deleteByIdIfPedidoPendente(@Param("id") UUID id);
 
-//    @Query("""
-//    SELECT CASE
-//        WHEN COUNT(i) > 0 THEN true
-//        ELSE false
-//    END
-//    FROM ItemPedido i
-//    WHERE i.id = :itemId
-//        AND i.pedido.usuario.id = :usuarioId
-//""")
-    boolean existsByIdAndPedidoUsuarioId(UUID itemId, UUID usuarioId);
+    boolean existsByProduto_Id(UUID produtoId);
 }

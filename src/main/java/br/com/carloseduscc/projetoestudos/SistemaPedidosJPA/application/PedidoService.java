@@ -10,11 +10,9 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper.P
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_filters.RequisicaoFiltroPedido;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.ItemPedidoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.PedidoRepository;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.ProdutoRepository;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.UsuarioRepository;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.ItemPedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.StatusPedido;
-import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +32,7 @@ public class PedidoService {
     private final UsuarioRepository usuarioRepository;
     private final PedidoRepository pedidoRepository;
     private final ItemPedidoRepository itemPedidoRepository;
+    private final ProdutoRepository produtoRepository;
     private final ItemPedidoMapper itemPedidoMapper;
     private final PedidoMapper mapper;
 
@@ -74,7 +73,7 @@ public class PedidoService {
 
     @Transactional
     Pedido buscarPedidosComItens(UUID id){
-        Optional<Pedido> optPedido = pedidoRepository.buscarPedidoComItensJoinFetch(id);
+        Optional<Pedido> optPedido = pedidoRepository.buscarPedidoFetchProduto(id);
         Pedido pedido = optPedido.orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + id.toString() + "não encontrado"));
         return pedido;
     }
@@ -91,47 +90,46 @@ public class PedidoService {
     }
 
     BigDecimal obterTotalPedido(UUID id){
-        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + "não encontrado"));
+        Pedido pedido = pedidoRepository.buscarPedidoFetchProduto(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + "não encontrado"));
         return pedido.getTotal();
     }
 
     @Transactional
     public ItemAdicionadoResponseDTO adicionarItem(UUID idPedido, AdicionarItemPedidoCommand itemCmd){
-        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(idPedido).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + " não encontrado"));
-        ItemPedido itemPedido = itemPedidoMapper.fromCommand(itemCmd);
+        Pedido pedido = pedidoRepository.buscarPedidoFetchProduto(idPedido).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + " não encontrado"));
+
+        Produto produto = produtoRepository.findById(itemCmd.produtoId()).orElseThrow(()-> new NaoEncontradoException("Produto com Id: " + itemCmd.produtoId().toString() + " não encontrado"));
+        ItemPedido itemPedido = new ItemPedido();
+        itemPedido.setProduto(produto);
+        itemPedido.setQuantidade(itemCmd.quantidade());
+
+        // Caso já exista um item com o mesmo produto, apenas atualiza a quantidade
+        for (ItemPedido item : pedido.getItens()) {
+            if (item.getProduto().getId().equals(itemCmd.produtoId())){
+                pedido.validarItemNoPedido(itemPedido);
+                item.setQuantidade(item.getQuantidade() + itemCmd.quantidade());
+                return itemPedidoMapper.toPedidoAdicionadoResponseDTO(itemPedidoRepository.save(item));
+            }
+        }
+
         pedido.adicionarItem(itemPedido);
         ItemPedido itemSalvo = itemPedidoRepository.save(itemPedido);
         ItemAdicionadoResponseDTO respostaDTO = itemPedidoMapper.toPedidoAdicionadoResponseDTO(itemSalvo);
         return respostaDTO;
     }
 
-    @Transactional
-    void cadastrarPedidoComItem(Pedido pedido, String nomeItem, Integer quantidadeItem, BigDecimal precounitarioItem){
-        pedidoRepository.save(pedido);
-
-        ItemPedido item = new ItemPedido();
-        item.setNomeProduto(nomeItem);
-        item.setQuantidade(quantidadeItem);
-        item.setPrecoUnitario(precounitarioItem);
-
-        pedido.adicionarItem(item);
-
-        itemPedidoRepository.save(item);
-    }
-
     public PedidoDetalhadoDTO obterDetalhes(UUID id) {
-        Pedido pedido = pedidoRepository.buscarPedidoComItensJoinFetch(id).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
+        Pedido pedido = pedidoRepository.buscarPedidoFetchProduto(id).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
         return mapper.toDTODetalhado(pedido);
     }
 
-    public Page<PedidoDTO> pesquisarListagem(RequisicaoFiltroPedido parametros) {
-        Pageable pageable = PageRequest.of(parametros.getPage(), parametros.getSize());
+    public Page<PedidoDTO> pesquisarListagem(Pageable pageable, RequisicaoFiltroPedido parametros) {
         Page<Pedido> page = pedidoRepository.findAll(parametros.toSpecification(), pageable);
         return page.map(mapper::toDTO);
     }
 
     public void mudarStatus(UUID id, StatusPedido statusPedido){
-        Pedido pedido = pedidoRepository.buscarPedidoComUsuarioJoinFetch(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
+        Pedido pedido = pedidoRepository.buscarPedidoFetchUsuario(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
         StatusPedido antigoStatus = pedido.getStatus();
         pedido.setStatus(statusPedido);
     }
@@ -144,7 +142,6 @@ public class PedidoService {
     @Transactional
     public void tornarEnviado(UUID id){
         mudarStatus(id, StatusPedido.ENVIADO);
-
     }
 
     @Transactional

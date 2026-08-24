@@ -7,6 +7,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exceptio
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.exception.RegistroDuplicadoException;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -50,8 +51,8 @@ public class GlobalExceptionHandler {
         log.info("Erro de recurso não encontrado: {}", e.getMessage());
         return new ErroResposta(
                 HttpStatus.NOT_FOUND.value(),
-                "Operação não permitida",
-                List.of()
+                "Não encontrado",
+                List.of(new CampoErro("Causa", e.getMessage()))
         );
     }
 
@@ -98,6 +99,17 @@ public class GlobalExceptionHandler {
                 e.getFieldErrors().stream()
                         .map(fe -> new CampoErro(fe.getField(), fe.getDefaultMessage()))
                         .collect(Collectors.toCollection(ArrayList::new))
+        );
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    ErroResposta handlePropertyReferenceException(PropertyReferenceException e) {
+        log.info("Erro de validação: {}",e.getMessage());
+        return new ErroResposta(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "Parâmetro inválido",
+                List.of(new CampoErro("Causa", e.getMessage()))
         );
     }
 
