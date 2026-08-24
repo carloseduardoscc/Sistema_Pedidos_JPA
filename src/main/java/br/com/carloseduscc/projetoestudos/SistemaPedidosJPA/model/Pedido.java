@@ -4,6 +4,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.Regr
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.util.Formatador;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -61,8 +62,9 @@ public class Pedido {
     @LastModifiedDate
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
-    @Column(name = "id_usuario")
-    private UUID idUsuario;
+    @CreatedBy
+    @Column(name = "criado_por")
+    private UUID criadoPor;
 
     // Controle de concorrência otimista
     @Version
@@ -70,7 +72,7 @@ public class Pedido {
 
     public BigDecimal getTotal() {
         return itens.stream()
-                .map(i -> i.getPrecoUnitario().multiply(BigDecimal.valueOf(i.getQuantidade())))
+                .map(i -> i.getProduto().getPrecoUnitario().multiply(BigDecimal.valueOf(i.getQuantidade())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -81,16 +83,19 @@ public class Pedido {
     }
 
     public void validarItemNoPedido(ItemPedido item) {
-        if (item.getQuantidade() <= 0) {
+        double precoUnitario = item.getProduto().getPrecoUnitario().doubleValue();
+        Integer quantidade = item.getQuantidade();
+
+        if (quantidade <= 0) {
             throw new RegraDeNegocioException("Quantidade negativa!");
         }
-        if (item.getPrecoUnitario().doubleValue() < 0.01) {
+        if (precoUnitario < 0.01) {
             throw new RegraDeNegocioException("Preço unitário negativo ou igual a zero!");
         }
-        if (item.getPrecoUnitario().doubleValue() > 10_000) {
+        if (precoUnitario > 10_000) {
             throw new RegraDeNegocioException("Preço unitário maior que "+Formatador.formatarDinheiro(VALOR_TOTAL_MAXIMO_PEDIDO));
         }
-        double totalSomadoNovoItem = getTotal().doubleValue() + (item.getPrecoUnitario().doubleValue() * item.getQuantidade());
+        double totalSomadoNovoItem = getTotal().doubleValue() + (precoUnitario * quantidade);
         if (totalSomadoNovoItem > VALOR_TOTAL_MAXIMO_PEDIDO) {
             throw new RegraDeNegocioException("Total do pedido ultrapassou " + Formatador.formatarDinheiro(VALOR_TOTAL_MAXIMO_PEDIDO));
         }

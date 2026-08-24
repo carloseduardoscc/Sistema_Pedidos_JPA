@@ -1,0 +1,23 @@
+package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.produto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Schema(description = "DTO de representação de produto")
+public record ProdutoDTO(
+        @Schema(description = "Identificador único do produto", example = "123e4567-e89b-12d3-a456-426614174000")
+        UUID id,
+        @NotBlank(message = "Nome do produto não pode estar em branco")
+        @Schema(description = "Nome do produto", example = "Notebook")
+        String nome,
+        @Schema(description = "Preço unitário do produto", example = "2500.00")
+        @DecimalMin(value = "0.01", message = "Preço unitário do produto deve ser maior que 0.01")
+        BigDecimal precoUnitario
+)
+{}

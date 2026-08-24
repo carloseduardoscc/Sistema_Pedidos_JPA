@@ -21,21 +21,23 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecif
     List<Pedido> findByStatus(StatusPedido status);
 
     @Query("""
-        SELECT p
-        FROM Pedido p
-        JOIN p.itens i
-        GROUP BY p
-        HAVING SUM(i.precoUnitario * i.quantidade) > ?1
+        SELECT ped
+        FROM Pedido ped
+        JOIN ped.itens i
+        JOIN i.produto prod
+        GROUP BY ped
+        HAVING SUM(prod.precoUnitario * i.quantidade) > ?1
 """)
     List<Pedido> buscarPedidoComTotalMaiorQue(BigDecimal valorMinimo);
 
     @Query("""
-    SELECT DISTINCT p
-    FROM Pedido p
-    LEFT JOIN FETCH p.itens
-    WHERE p.id = :id
+    SELECT DISTINCT ped
+    FROM Pedido ped
+    LEFT JOIN FETCH ped.itens i
+    LEFT JOIN FETCH i.produto prod
+    WHERE ped.id = :id
 """)
-    Optional<Pedido> buscarPedidoComItensJoinFetch(@Param("id") UUID id);
+    Optional<Pedido> buscarPedidoFetchProduto(@Param("id") UUID id);
 
     @Modifying
     @Query("""
@@ -60,10 +62,10 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecif
     @Query("""
     SELECT DISTINCT p
     FROM Pedido p
-    LEFT JOIN FETCH p.usuario
+    JOIN FETCH p.usuario
     WHERE p.id = :id
 """)
-    Optional<Pedido> buscarPedidoComUsuarioJoinFetch(@Param("id") UUID id);
+    Optional<Pedido> buscarPedidoFetchUsuario(@Param("id") UUID id);
 
     boolean existsByIdAndUsuarioId(UUID idPedido, UUID id);
 }

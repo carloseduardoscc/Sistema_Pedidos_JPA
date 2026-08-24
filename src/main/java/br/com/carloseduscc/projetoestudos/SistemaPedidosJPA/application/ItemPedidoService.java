@@ -44,16 +44,8 @@ public class ItemPedidoService {
                 .filter(i -> i.getId().toString().equals(id.toString()))
                 .findFirst().get();
 
-        if (dados.nomeProduto() != null){
-            itemPedido.setNomeProduto(dados.nomeProduto());
-        }
         if (dados.quantidade() != null){
             itemPedido.setQuantidade(dados.quantidade());
-        }
-        if (dados.precoUnitario() != null){
-            itemPedido.setPrecoUnitario(dados.precoUnitario());
-        }
-        if (dados.quantidade() != null || dados.precoUnitario() != null){
             pedido.validarItemNoPedido(itemPedido);
         }
     }

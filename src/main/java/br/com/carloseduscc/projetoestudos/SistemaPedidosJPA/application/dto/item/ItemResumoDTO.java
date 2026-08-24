@@ -11,6 +11,8 @@ public record ItemResumoDTO(
         @Schema(example = "Mouse gamer")
         String nomeProduto,
         @Schema(example = "76.99")
-        BigDecimal valor
+        BigDecimal valor,
+        @Schema(example = "5")
+        Integer quantidade
 ) {
 }

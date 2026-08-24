@@ -72,6 +72,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/h2-console/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/login").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/produtos/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .oauth2Login(oauth -> {

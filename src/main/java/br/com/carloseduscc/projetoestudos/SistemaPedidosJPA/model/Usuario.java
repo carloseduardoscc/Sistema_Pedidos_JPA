@@ -2,6 +2,7 @@ package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -60,6 +61,10 @@ public class Usuario {
     @LastModifiedDate
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
+
+    @CreatedBy
+    @Column(name = "criado_por")
+    private UUID criadoPor;
 
     // Controle de concorrência otimista
     @Version

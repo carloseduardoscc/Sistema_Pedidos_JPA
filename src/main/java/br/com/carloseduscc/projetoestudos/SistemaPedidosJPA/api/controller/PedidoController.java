@@ -7,6 +7,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedi
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDetalhadoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.query_filters.RequisicaoFiltroPedido;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.security.SecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,7 +16,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +49,7 @@ public class PedidoController implements GenericController {
             @ApiResponse(responseCode = "404", description = "Pedido não encontrado", content = @Content())
     })
     public ResponseEntity<ItemAdicionadoResponseDTO> adicionarItemAoPedido(@PathVariable @Valid UUID idPedido, @RequestBody @Valid AdicionarItemPedidoCommand itemCmd) {
-        log.info("Adicionando item {} ao pedido de ID: {}", itemCmd.nomeProduto(), idPedido);
+        log.info("Adicionando item com produto {} ao pedido de ID: {}", itemCmd.produtoId(), idPedido);
         var dtoResponse = service.adicionarItem(idPedido, itemCmd);
         URI uri = gerarHeaderLocation(dtoResponse.idItem().toString());
         return ResponseEntity.created(uri).body(dtoResponse);
@@ -73,9 +78,27 @@ public class PedidoController implements GenericController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Pesquisa realizada com sucesso")
     })
-    public ResponseEntity<Page<PedidoDTO>> pesquisarListagem(@ModelAttribute RequisicaoFiltroPedido parametros) {
-        log.info("Pesquisando pedidos com parâmetros e paginação: {}", parametros.toString());
-        Page<PedidoDTO> page = service.pesquisarListagem(parametros);
+    public ResponseEntity<Page<PedidoDTO>> pesquisarListagem(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
+            @ParameterObject Pageable pageable,
+            @ModelAttribute RequisicaoFiltroPedido requisicaoFiltro) {
+        log.info("Pesquisando pedidos com parâmetros e paginação: {}", requisicaoFiltro.toString());
+        Page<PedidoDTO> page = service.pesquisarListagem(pageable, requisicaoFiltro);
+        return ResponseEntity.ok(page);
+    }
+
+    @Operation(
+            summary = "Meus pedidos", description = "Realiza pesquisa dos pedidos do usuário logado"
+    )
+    @GetMapping("meus-pedidos")
+    public ResponseEntity<Page<PedidoDTO>> meusPedidos(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
+            @ParameterObject Pageable pageable,
+            @ModelAttribute RequisicaoFiltroPedido requisicaoFiltro,
+            SecurityService securityService) {
+        log.info("Pesquisando pedidos do usuário: {}", securityService.obterUsuarioLogado().getEmail());
+        requisicaoFiltro.setUsuarioEmail(securityService.obterUsuarioLogado().getEmail());
+        Page<PedidoDTO> page = service.pesquisarListagem(pageable, requisicaoFiltro);
         return ResponseEntity.ok(page);
     }
 

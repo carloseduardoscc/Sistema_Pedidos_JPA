@@ -18,16 +18,14 @@ public class RequisicaoFiltroPedido {
     LocalDateTime dateMax;
     @Schema(example = "carlos.eduardo@email.com")
     String usuarioEmail;
-    @Schema(example = "0")
-    Integer page = 0;
-    @Schema(example = "10")
-    Integer size = 10;
 
     public Specification<Pedido> toSpecification(){
         Specification<Pedido> spec = initialize();
+
         if(dateMin != null) spec = spec.and(isAfter(dateMin));
         if(dateMax != null) spec = spec.and(isBefore(dateMax));
         if(usuarioEmail != null) spec = spec.and(usuarioEmailIsLike(usuarioEmail));
+
         return spec;
     }
 }

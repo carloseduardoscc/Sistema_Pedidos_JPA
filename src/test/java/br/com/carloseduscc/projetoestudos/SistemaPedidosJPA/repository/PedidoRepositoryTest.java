@@ -17,7 +17,7 @@ public class PedidoRepositoryTest {
 
     @Test
     void buscarPedidosPorUsuarioTest(){
-        Optional<Pedido> pedidoOpt = repository.buscarPedidoComItensJoinFetch(UUID.fromString("d4f8c6a9-7b3e-4f1a-a29d-8e5b0c1f73ab"));
+        Optional<Pedido> pedidoOpt = repository.buscarPedidoFetchProduto(UUID.fromString("d4f8c6a9-7b3e-4f1a-a29d-8e5b0c1f73ab"));
 
         IO.println(pedidoOpt.get());
     }

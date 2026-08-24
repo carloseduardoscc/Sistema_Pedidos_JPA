@@ -37,7 +37,7 @@ spring:
 # Datasource
   datasource:
     username: sa
-    url: "jdbc:h2:mem:testdb;INIT=CREATE SCHEMA IF NOT EXISTS order_management"
+    url: "jdbc:h2:mem:testdb;INIT=CREATE SCHEMA IF NOT EXISTS order_management\\;CREATE SCHEMA IF NOT EXISTS stock"
     password: ''
     driver-class-name: org.h2.Driver
   sql:
@@ -69,6 +69,11 @@ logging:
       springframework:
         security: debug
         web: debug
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
 
 
