@@ -24,6 +24,12 @@ import java.util.UUID;
 @Entity
 public class ItemPedido {
 
+    public ItemPedido(Integer quantidade, Produto produto, Pedido pedido){
+        setQuantidade(quantidade);
+        setProduto(produto);
+        setPedido(pedido);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -62,6 +68,11 @@ public class ItemPedido {
 
     public BigDecimal getValorTotal(){
         return produto.getPrecoUnitario().multiply(BigDecimal.valueOf(quantidade));
+    }
+
+    public void acrescentarQuantidade(Integer quantidade){
+        pedido.validarNovoItemNoPedido(new ItemPedido(quantidade, produto, pedido));
+        this.quantidade += quantidade;
     }
 }
 

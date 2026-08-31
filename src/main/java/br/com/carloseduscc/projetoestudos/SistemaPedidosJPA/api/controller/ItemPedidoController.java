@@ -54,7 +54,7 @@ public class ItemPedidoController implements GenericController {
     })
     public ResponseEntity<Void> atualizarItem(@PathVariable UUID itemId, @RequestBody @Valid AtualizarItemCommand dados) {
         log.info("Atualizando item de ID: {}", itemId);
-        service.atualizarItem(dados, itemId);
+        service.atualizar(dados, itemId);
         return ResponseEntity.noContent().build();
     }
 
@@ -70,7 +70,7 @@ public class ItemPedidoController implements GenericController {
     })
     public ResponseEntity<Void> removerItem(@PathVariable UUID itemId) {
         log.info("Removendo item de ID: {}", itemId);
-        service.removerItem(itemId);
+        service.remover(itemId);
         return ResponseEntity.noContent().build();
     }
 }

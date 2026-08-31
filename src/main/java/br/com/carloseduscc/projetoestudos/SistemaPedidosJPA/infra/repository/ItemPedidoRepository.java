@@ -23,9 +23,17 @@ public interface ItemPedidoRepository extends JpaRepository<ItemPedido, UUID> {
     FROM ItemPedido i
     JOIN i.pedido ped
     JOIN i.produto prod
-    WHERE i.id = :idItem
+    WHERE i.id = :id
 """)
-    Optional<ItemPedidoDetalhadoProjection> buscarItemPedidoDetalhadoProjection(@Param("idItem") UUID id);
+    Optional<ItemPedidoDetalhadoProjection> buscarItemPedidoDetalhadoProjection(@Param("id") UUID id);
+
+    @Query("""
+    SELECT i
+    FROM ItemPedido i
+    JOIN FETCH i.pedido
+    WHERE i.id = :id
+""")
+    Optional<ItemPedido> buscarItemFetchPedido(@Param("id") UUID id);
 
     @Transactional
     @Modifying

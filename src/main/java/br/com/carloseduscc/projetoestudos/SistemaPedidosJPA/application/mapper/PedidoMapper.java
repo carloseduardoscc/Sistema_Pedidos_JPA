@@ -1,8 +1,10 @@
 package br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.mapper;
 
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.atualizacaoStatus.AtualizacaoStatusDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.AbrirPedidoResponseDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDTO;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.application.dto.pedido.PedidoDetalhadoDTO;
+import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.AtualizacaoStatus;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Pedido;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,4 +20,7 @@ public interface PedidoMapper {
 
     // TO RESPONSES
     AbrirPedidoResponseDTO toAbrirPedidoResponseDto(Pedido pedido);
+
+    // Atualização de status
+    AtualizacaoStatusDTO toDTO(AtualizacaoStatus atualizacaoStatus);
 }

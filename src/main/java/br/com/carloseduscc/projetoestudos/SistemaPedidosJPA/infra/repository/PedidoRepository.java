@@ -34,10 +34,11 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecif
     SELECT DISTINCT ped
     FROM Pedido ped
     LEFT JOIN FETCH ped.itens i
-    LEFT JOIN FETCH i.produto prod
+    LEFT JOIN FETCH i.produto
+    LEFT JOIN FETCH ped.atualizacoesDeStatus
     WHERE ped.id = :id
 """)
-    Optional<Pedido> buscarPedidoFetchProduto(@Param("id") UUID id);
+    Optional<Pedido> buscarPedidoFetchProdutoItemAtualizacaostatus(@Param("id") UUID id);
 
     @Modifying
     @Query("""
@@ -66,6 +67,4 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecif
     WHERE p.id = :id
 """)
     Optional<Pedido> buscarPedidoFetchUsuario(@Param("id") UUID id);
-
-    boolean existsByIdAndUsuarioId(UUID idPedido, UUID id);
 }

@@ -9,8 +9,9 @@ import java.util.UUID;
 @Schema(name = "Pedido")
 public record PedidoDTO(
         UUID id,
-        @Schema
+        @Schema(description = "Data e hora de quando o pedido foi aberto")
         LocalDateTime dataHoraPedido,
+        @Schema(description = "Status do pedido")
         StatusPedido status
 ) {
 }

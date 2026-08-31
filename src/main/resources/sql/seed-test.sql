@@ -250,3 +250,55 @@ VALUES ('10000000-0000-0000-0000-000000000001',
         'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
         '20000000-0000-0000-0000-000000000008',
         '33333333-3333-3333-3333-333333333333');
+
+-- ==========================
+-- ATUALIZAÇÕES DE STATUS DOS PEDIDOS
+-- ==========================
+
+INSERT INTO order_management.atualizacao_status_tb
+(data_hora, status, pedido_id)
+VALUES
+        -- Pedido A
+        (DATEADD('DAY', -5, CURRENT_TIMESTAMP),
+         'PENDENTE',
+         'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+
+        (DATEADD('DAY', -4, CURRENT_TIMESTAMP),
+         'PAGO',
+         'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+
+        -- Pedido B
+        (DATEADD('DAY', -3, CURRENT_TIMESTAMP),
+         'PENDENTE',
+         'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'),
+
+        (DATEADD('DAY', -2, CURRENT_TIMESTAMP),
+         'PAGO',
+         'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'),
+
+        -- Pedido C
+        (DATEADD('DAY', -2, CURRENT_TIMESTAMP),
+         'PENDENTE',
+         'cccccccc-cccc-cccc-cccc-cccccccccccc'),
+
+        (DATEADD('DAY', -1, CURRENT_TIMESTAMP),
+         'CANCELADO',
+         'cccccccc-cccc-cccc-cccc-cccccccccccc'),
+
+        -- Pedido D
+        (DATEADD('DAY', -1, CURRENT_TIMESTAMP),
+         'PENDENTE',
+         'dddddddd-dddd-dddd-dddd-dddddddddddd'),
+
+        (DATEADD('HOUR', -12, CURRENT_TIMESTAMP),
+         'PAGO',
+         'dddddddd-dddd-dddd-dddd-dddddddddddd'),
+
+        (DATEADD('HOUR', -6, CURRENT_TIMESTAMP),
+         'ENTREGUE',
+         'dddddddd-dddd-dddd-dddd-dddddddddddd'),
+
+        -- Pedido E
+        (CURRENT_TIMESTAMP,
+         'PENDENTE',
+         'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee');
