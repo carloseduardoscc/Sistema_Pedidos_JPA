@@ -17,6 +17,7 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.Usuario;
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.exception.RegraDeNegocioException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -38,7 +39,6 @@ public class UsuarioService {
     final private UsuarioValidator validator;
     final private PasswordEncoder encoder;
 
-    @Transactional
     public UsuarioDTO cadastrarUsuario(CadastrarUsuarioCommand usuarioCmd) {
         Usuario usuario = mapper.fromCommand(usuarioCmd);
         usuario.setSenha(encoder.encode(usuario.getSenha()));
@@ -48,8 +48,8 @@ public class UsuarioService {
     }
 
     public UsuarioDTO buscarDetalhes(UUID id) {
-        Optional<Usuario> usuarioOpt = repository.findById(id);
-        Usuario usuario = usuarioOpt.orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> getUsuarioNaoEncontradoException(id));
         return mapper.toDTO(usuario);
     }
 
@@ -66,11 +66,11 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void atualizarDados(@Valid AtualizarDadosUsuarioCommand dados, UUID id) {
-        Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
-        if (dados.nome() != null && !usuario.getNome().equals(dados.nome())){
-            usuario.setNome(dados.nome());
-        }
+    public void atualizarDados(AtualizarDadosUsuarioCommand dados, UUID id) {
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> getUsuarioNaoEncontradoException(id));
+
+        if (dados.nome() != null && !usuario.getNome().equals(dados.nome())) usuario.setNome(dados.nome());
         if (dados.email() != null && !usuario.getEmail().equals(dados.email())) {
             validator.validarEmailJaExiste(dados.email());
             usuario.setEmail(dados.email());
@@ -78,7 +78,7 @@ public class UsuarioService {
     }
 
     public AbrirPedidoResponseDTO abrirNovoPedido(UUID id) {
-        Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
+        Usuario usuario = repository.findById(id).orElseThrow(() -> getUsuarioNaoEncontradoException(id));
         if (pedidoRepository.existsByUsuarioAndStatus(usuario, StatusPedido.PENDENTE)) throw new RegraDeNegocioException("Usuário já tem um pedido pendente");
 
         Pedido pedido = new Pedido(usuario);
@@ -88,12 +88,16 @@ public class UsuarioService {
 
     @Transactional
     public void desativarUsuario(UUID id){
-        Usuario usuario = repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Não existe usuário com id: " + id.toString()));
+        Usuario usuario = repository.findById(id).orElseThrow(() -> getUsuarioNaoEncontradoException(id));
         validator.validarDesativacao(usuario);
         usuario.setAtivo(false);
     }
 
     public Optional<Usuario> obterPorLogin(String login) {
         return repository.findByEmail(login);
+    }
+
+    private static @NonNull NaoEncontradoException getUsuarioNaoEncontradoException(UUID id) {
+        return new NaoEncontradoException("Não existe usuário com id: " + id.toString());
     }
 }

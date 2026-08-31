@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -69,7 +70,6 @@ public class SecurityConfiguration {
                     configurer.loginPage("/login").permitAll();
                 })
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/h2-console/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/produtos/**").permitAll();
@@ -89,8 +89,10 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    @Profile("test")
     public WebSecurityCustomizer webSecurityCustomizer(){
         return web -> web.ignoring().requestMatchers(
+                "/h2-console/**",
                 "/v2/api-docs/**",
                 "/v3/api-docs/**",
                 "/swagger-resources/**",

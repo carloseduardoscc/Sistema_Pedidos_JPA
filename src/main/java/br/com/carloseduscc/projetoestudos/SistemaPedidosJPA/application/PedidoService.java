@@ -15,7 +15,6 @@ import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.infra.repository.Usu
 import br.com.carloseduscc.projetoestudos.SistemaPedidosJPA.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
@@ -34,81 +34,36 @@ public class PedidoService {
     private final ItemPedidoRepository itemPedidoRepository;
     private final ProdutoRepository produtoRepository;
     private final ItemPedidoMapper itemPedidoMapper;
-    private final PedidoMapper mapper;
+    private final PedidoMapper pedidoMapper;
 
-    @Transactional
-    public Pedido abrirPedido(UUID idUsuario) {
-        Pedido pedido = new Pedido();
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
-        pedido.setUsuario(usuario);
-        pedido.setStatus(StatusPedido.PENDENTE);
+    public PedidoDetalhadoDTO obterDetalhes(UUID id) {
+        Pedido pedido = pedidoRepository.buscarPedidoFetchProdutoItemAtualizacaostatus(id)
+                .orElseThrow(getPedidoNaoEncontradoException(id));
 
-        pedidoRepository.save(pedido);
+        return pedidoMapper.toDTODetalhado(pedido);
+    }
 
-        return pedido;
+    public Page<PedidoDTO> pesquisarListagem(Pageable pageable, RequisicaoFiltroPedido parametros) {
+        Page<Pedido> page = pedidoRepository.findAll(parametros.toSpecification(), pageable);
+        return page.map(pedidoMapper::toDTO);
     }
 
     @Transactional
-    List<Pedido> buscarPorUsuarios(UUID idUsuario){
-        Optional<Usuario> optUsuario = usuarioRepository.findById(idUsuario);
-        Usuario usuario = optUsuario.orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + idUsuario.toString() + "não encontrado"));
+    public ItemAdicionadoResponseDTO adicionarItem(UUID idPedido, AdicionarItemPedidoCommand dadosNovoItem) {
+        Pedido pedido = pedidoRepository.buscarPedidoFetchProdutoItemAtualizacaostatus(idPedido)
+                .orElseThrow(getPedidoNaoEncontradoException(idPedido));
 
-        List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
+        Produto produto = produtoRepository.findById(dadosNovoItem.produtoId())
+                .orElseThrow(getProdutoNaoEncontradoException(dadosNovoItem.produtoId()));
 
-        return pedidos;
-    }
-
-
-    @Transactional
-    List<Pedido> buscarPorStatus(StatusPedido statusPedido){
-        List<Pedido> pedidos = pedidoRepository.findByStatus(statusPedido);
-        return pedidos;
-    }
-
-    @Transactional
-    List<Pedido> buscarPedidosComTotalMaiorQue(BigDecimal valorMinimo){
-        List<Pedido> pedidos = pedidoRepository.buscarPedidoComTotalMaiorQue(valorMinimo);
-        return pedidos;
-    }
-
-    @Transactional
-    Pedido buscarPedidosComItens(UUID id){
-        Optional<Pedido> optPedido = pedidoRepository.buscarPedidoFetchProduto(id);
-        Pedido pedido = optPedido.orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + id.toString() + "não encontrado"));
-        return pedido;
-    }
-
-    @Transactional
-    void atualizarStatusPedido(UUID id, StatusPedido novoStatus){
-        pedidoRepository.atualizarStatus(id, novoStatus);
-    }
-
-    @Transactional
-    void atualizarStatusPedidoDirtyChecking(UUID id, StatusPedido novoStatus){
-        Pedido pedido = pedidoRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Usuário com Id: " + id.toString() + " não encontrado"));
-        pedido.setStatus(novoStatus);
-    }
-
-    BigDecimal obterTotalPedido(UUID id){
-        Pedido pedido = pedidoRepository.buscarPedidoFetchProduto(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + "não encontrado"));
-        return pedido.getTotal();
-    }
-
-    @Transactional
-    public ItemAdicionadoResponseDTO adicionarItem(UUID idPedido, AdicionarItemPedidoCommand itemCmd){
-        Pedido pedido = pedidoRepository.buscarPedidoFetchProduto(idPedido).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + idPedido.toString() + " não encontrado"));
-
-        Produto produto = produtoRepository.findById(itemCmd.produtoId()).orElseThrow(()-> new NaoEncontradoException("Produto com Id: " + itemCmd.produtoId().toString() + " não encontrado"));
-        ItemPedido itemPedido = new ItemPedido();
-        itemPedido.setProduto(produto);
-        itemPedido.setQuantidade(itemCmd.quantidade());
+        ItemPedido itemPedido = new ItemPedido(dadosNovoItem.quantidade(), produto, pedido);
 
         // Caso já exista um item com o mesmo produto, apenas atualiza a quantidade
         for (ItemPedido item : pedido.getItens()) {
-            if (item.getProduto().getId().equals(itemCmd.produtoId())){
-                pedido.validarItemNoPedido(itemPedido);
-                item.setQuantidade(item.getQuantidade() + itemCmd.quantidade());
-                return itemPedidoMapper.toPedidoAdicionadoResponseDTO(itemPedidoRepository.save(item));
+            if (item.getProduto().getId().equals(produto.getId())) {
+                item.acrescentarQuantidade(dadosNovoItem.quantidade());
+                ItemPedido itemSalvo = itemPedidoRepository.save(item);
+                return itemPedidoMapper.toPedidoAdicionadoResponseDTO(itemSalvo);
             }
         }
 
@@ -118,40 +73,40 @@ public class PedidoService {
         return respostaDTO;
     }
 
-    public PedidoDetalhadoDTO obterDetalhes(UUID id) {
-        Pedido pedido = pedidoRepository.buscarPedidoFetchProduto(id).orElseThrow(()-> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
-        return mapper.toDTODetalhado(pedido);
-    }
-
-    public Page<PedidoDTO> pesquisarListagem(Pageable pageable, RequisicaoFiltroPedido parametros) {
-        Page<Pedido> page = pedidoRepository.findAll(parametros.toSpecification(), pageable);
-        return page.map(mapper::toDTO);
-    }
-
-    public void mudarStatus(UUID id, StatusPedido statusPedido){
-        Pedido pedido = pedidoRepository.buscarPedidoFetchUsuario(id).orElseThrow(() -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado"));
-        StatusPedido antigoStatus = pedido.getStatus();
-        pedido.setStatus(statusPedido);
-    }
-
-    @Transactional
-    public void tornarPago(UUID id){
+    public void tornarPago(UUID id) {
         mudarStatus(id, StatusPedido.PAGO);
     }
 
-    @Transactional
-    public void tornarEnviado(UUID id){
+    public void tornarEnviado(UUID id) {
         mudarStatus(id, StatusPedido.ENVIADO);
     }
 
-    @Transactional
-    public void tornarEntregue(UUID id){
+    public void tornarEntregue(UUID id) {
         mudarStatus(id, StatusPedido.ENTREGUE);
 
     }
 
     @Transactional
-    public void tornarCancelado(UUID id){
+    public void tornarCancelado(UUID id) {
         mudarStatus(id, StatusPedido.CANCELADO);
     }
+
+    private void mudarStatus(UUID id, StatusPedido statusPedido) {
+        Pedido pedido = pedidoRepository.buscarPedidoFetchUsuario(id)
+                .orElseThrow(getPedidoNaoEncontradoException(id));
+        pedido.mudarStatus(statusPedido);
+    }
+
+    private static Supplier<NaoEncontradoException> getPedidoNaoEncontradoException(UUID id) {
+        return () -> new NaoEncontradoException("Pedido com Id: " + id.toString() + " não encontrado");
+    }
+
+    private static Supplier<NaoEncontradoException> getUsuarioNaoEncontradoException(UUID id) {
+        return () -> new NaoEncontradoException("Usuário com Id: " + id.toString() + " não encontrado");
+    }
+
+    private static Supplier<NaoEncontradoException> getProdutoNaoEncontradoException(UUID id) {
+        return () -> new NaoEncontradoException("Produto com Id: " + id.toString() + " não encontrado");
+    }
 }
+

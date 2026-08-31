@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Schema(description = "DTO de representação de produto")
+@Schema(name = "DTO de representação de produto")
 public record ProdutoDTO(
         @Schema(description = "Identificador único do produto", example = "123e4567-e89b-12d3-a456-426614174000")
         UUID id,

@@ -11,14 +11,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = "itens")
 @Table(name = "pedido_tb", schema = "order_management")
 @Entity
@@ -29,7 +27,7 @@ public class Pedido {
 
     {
         this.dataHoraPedido = LocalDateTime.now();
-        this.itens = new ArrayList<>();
+        this.itens = new HashSet<>();
         this.status = StatusPedido.PENDENTE;
     }
 
@@ -39,6 +37,7 @@ public class Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(name = "dataHoraPedido")
@@ -49,10 +48,13 @@ public class Pedido {
     private StatusPedido status;
 
     // Relação
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.PERSIST)
-    private List<ItemPedido> itens;
+    @OneToMany(mappedBy = "pedido")
+    private Set<AtualizacaoStatus> atualizacoesDeStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "pedido")
+    private Set<ItemPedido> itens;
+
+    @ManyToOne
     private Usuario usuario;
 
     // Auditoria
@@ -77,12 +79,19 @@ public class Pedido {
     }
 
     public void adicionarItem(ItemPedido item) {
-        validarItemNoPedido(item);
+        validarNovoItemNoPedido(item);
         itens.add(item);
         item.setPedido(this);
     }
 
-    public void validarItemNoPedido(ItemPedido item) {
+    private AtualizacaoStatus adicionarAtualizacaoDeStatus(StatusPedido novoStatus) {
+        AtualizacaoStatus atualizacaoStatus = new AtualizacaoStatus(novoStatus);
+        atualizacoesDeStatus.add(atualizacaoStatus);
+        atualizacaoStatus.setPedido(this);
+        return atualizacaoStatus;
+    }
+
+    public void validarNovoItemNoPedido(ItemPedido item) {
         double precoUnitario = item.getProduto().getPrecoUnitario().doubleValue();
         Integer quantidade = item.getQuantidade();
 
@@ -104,8 +113,9 @@ public class Pedido {
         }
     }
 
-    public void setStatus(StatusPedido status){
+    public void mudarStatus(StatusPedido status){
         this.status.validarTransacao(status);
+        adicionarAtualizacaoDeStatus(status);
         this.status = status;
     }
 }

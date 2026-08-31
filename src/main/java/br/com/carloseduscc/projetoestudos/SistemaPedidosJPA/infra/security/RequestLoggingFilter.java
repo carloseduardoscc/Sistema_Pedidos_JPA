@@ -11,15 +11,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class RequestLoggingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String user = authentication.getName();
-        String roles = authentication.getAuthorities().toString();
+        Optional<Authentication> authenticationOpt = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
+        String user = authenticationOpt.isPresent() ? authenticationOpt.get().getName() : "ANONYMOUS";
+        String roles = authenticationOpt.isPresent() ? authenticationOpt.get().getAuthorities().toString() : "ANONYMOUS";
         MDC.put("user", user);
         MDC.put("roles", roles);
 
